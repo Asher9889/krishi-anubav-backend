@@ -1,10 +1,15 @@
 import axios from "axios";
+import envConfig from "./env.config";
 
-const api = axios.create({
-    baseURL: process.env.API_BASE_URL || "http://localhost:3000/api",
+
+
+
+
+const otpApi = axios.create({
+    baseURL: envConfig.msg91SendSmsApiBaseUrl,
     headers: {
         "Content-Type": "application/json",
     }
 })
 
-export default api;
+export default otpApi;

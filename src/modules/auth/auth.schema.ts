@@ -17,6 +17,18 @@ const sendOTPSchema = z.object({
     })
 });
 
+const verifyOTPSchema = z.object({
+    phone: z.string().refine((value) => {
+        const phoneNumber = parsePhoneNumberFromString(value, "IN");
+        return phoneNumber?.isValid() || false;
+    }, { message: "Please provide a valid phone number." }).transform((value) => {
+        const phoneNumber = parsePhoneNumberFromString(value, "IN");
+        return phoneNumber?.number;
+    }),
+    reqId: z.string({error: "Request ID is required"}),
+    otp: z.string().length(4, { error: "OTP must be 4 digits" }),
+})
+
 
 
 const registerSchema = z.object({
@@ -25,4 +37,4 @@ const registerSchema = z.object({
     name: z.string().min(1, "Name is required").trim()
 })
 
-export { loginSchema, registerSchema, sendOTPSchema }; 
+export { loginSchema, registerSchema, sendOTPSchema, verifyOTPSchema }; 

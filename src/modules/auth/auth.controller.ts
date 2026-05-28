@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { TRegister } from "./auth.types";
+import { TRegister, TVerifyOTP } from "./auth.types";
 import AuthService from "./auth.service";
 import { ApiResponse } from "../../utils";
 import { StatusCodes } from "http-status-codes";
+import { logger } from "../../config";
 
 class AuthController {
     authService: AuthService;
@@ -13,11 +14,37 @@ class AuthController {
     sendOTP = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { phone } = req.body;
-            console.log(`Received request to send OTP to phone number: ${phone}`);
-            const result = await this.authService.sendOTP(phone);
-            return ApiResponse.success(res, StatusCodes.OK, "OTP sent successfully", result);
+            logger.info(`Received request to send OTP to phone number: ${phone}`);
+            const { message, type} = await this.authService.sendOTP(phone);
+            return ApiResponse.success(res, StatusCodes.OK, "OTP sent successfully", { requestId: message, type });
         } catch (error) {
-            console.error("Error occurred while sending OTP:", error);
+            logger.error("Error occurred while sending OTP:"+ error);
+            return next(error);
+        }
+    }
+    
+    verifyOTP = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { reqId, otp, phone } = req.body as TVerifyOTP;
+            logger.info(`Received request to verify OTP for phone number: ${phone}, request ID: ${reqId} with OTP: ${otp}`);
+            const { tokens: {accessToken, refreshToken}, user } = await this.authService.verifyOTP(req.body);
+            res.cookie("refreshToken", refreshToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+                maxAge: 24 * 60 * 60 * 1000, // 1 day
+            });
+
+            res.cookie("accessToken", accessToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+                maxAge: 1 * 60 * 60 * 1000, // 1 hour
+            });
+
+            return ApiResponse.success(res, StatusCodes.OK, "OTP verified successfully", {user, tokens: { accessToken, refreshToken }});
+        } catch (error) {
+            logger.error("Error occurred while verifying OTP:" + error);
             return next(error);
         }
     }

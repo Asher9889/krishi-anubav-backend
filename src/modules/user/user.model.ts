@@ -1,5 +1,10 @@
 import mongoose, { Document, ObjectId } from "mongoose";
-import { OCCUPATIONS, TLanguage, LANGUAGES, TOccupation, TUserRole, USER_ROLE, TUserStatus, USER_STATUS } from "./user.types";
+import { OCCUPATIONS, TLanguage, LANGUAGES, TOccupation, TUserRole, USER_ROLE, TUserStatus, USER_STATUS, TJwtPayloadToken } from "./user.types";
+import { parsePhoneNumberFromString } from "libphonenumber-js"
+import jwt from "jsonwebtoken";
+import { envConfig } from "../../config";
+
+
 
 interface IUser extends Document {
 
@@ -38,6 +43,7 @@ interface IUser extends Document {
 
     createdAt: Date
     updatedAt: Date
+    generateJWTToken: () => { accessToken: string; refreshToken: string };
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -51,7 +57,10 @@ const userSchema = new mongoose.Schema<IUser>({
         match: /^[a-z0-9_]{3,30}$/
     },
 
-    phone: { type: String, required: true, unique: true, trim: true },
+    phone: { type: String, required: true, unique: true, trim: true, validate: (value:string) => {
+        const phoneNumber = parsePhoneNumberFromString(value, 'IN');
+        return phoneNumber && phoneNumber.isValid();
+    } },
 
     fullName: { type: String, trim: true },
 
@@ -80,6 +89,23 @@ const userSchema = new mongoose.Schema<IUser>({
     lastLoginAt: { type: Date },
 
 }, { timestamps: true, versionKey: false });
+
+
+userSchema.methods.generateJWTToken =  function() {
+    const payload: TJwtPayloadToken = { phone: this.phone };
+    if(this.role) {
+        payload.role = this.role;
+    }
+    if(this.username){
+        payload.username = this.username;
+    }
+
+    const accessToken = jwt.sign(payload, envConfig.jwtSecret, { expiresIn: "1h" });
+    const secretToken = jwt.sign(payload, envConfig.jwtSecret, { expiresIn: "1d" });
+
+    return { accessToken, secretToken };
+}
+
 
 const UserModel = mongoose.model<IUser>("User", userSchema);
 

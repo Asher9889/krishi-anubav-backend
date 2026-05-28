@@ -1,8 +1,18 @@
 import jwt from "jsonwebtoken";
 import { envConfig } from "../../config";
 
-const generateJWTToken = (userId: string) => {
-  const token = jwt.sign({ userId }, envConfig.jwtSecret, { expiresIn: "1d" }); 
+type TGenerateJWTToken = {
+  phone: string;
+  userId?: string;
+}
+
+const generateJWTToken = ( { phone, userId }: TGenerateJWTToken ):string => {
+  let payload: TGenerateJWTToken = { phone };
+  if(userId) {
+    payload = { ...payload, userId };
+  }
+
+  const token = jwt.sign({ userId, phone }, envConfig.jwtSecret, { expiresIn: "1d" }); 
   return token;
 };
 

@@ -12,7 +12,7 @@ const envConfig:IEnvConfig = {
 
     msg91WidgetId: process.env.MSG91_WIDGET_ID!,
     msg91AuthToken: process.env.MSG91_AUTH_KEY!,
-    msg91SendSmsApiUrl: process.env.MSG91_SEND_SMS_API_URL!,
+    msg91SendSmsApiBaseUrl: process.env.MSG91_SEND_SMS_API_URL!,
 
 
     // jwt

@@ -10,7 +10,7 @@ interface IEnvConfig {
 
     msg91WidgetId: string;
     msg91AuthToken: string;
-    msg91SendSmsApiUrl: string;
+    msg91SendSmsApiBaseUrl: string;
 
 }
 
