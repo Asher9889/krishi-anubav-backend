@@ -4,7 +4,13 @@ interface IEnvConfig {
     mongodbPassword: string;
     mongodbCluster: string;
     mongodbDbName: string;
+    mongodbConnectionString: string;
+
     jwtSecret: string;
+
+    msg91WidgetId: string;
+    msg91AuthToken: string;
+    msg91SendSmsApiUrl: string;
 
 }
 

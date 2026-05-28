@@ -43,6 +43,5 @@ userSchema.methods.comparePassword = async function (inputPassword: string): Pro
   return await argon2.verify(this.password, inputPassword);
 }
 
-userSchema.index({ email: 1 }, { unique: true });
 
 export const UserModel = mongoose.model<IUser>("User", userSchema);

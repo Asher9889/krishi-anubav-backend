@@ -10,6 +10,18 @@ class AuthController {
         this.authService = authService;
     }
 
+    sendOTP = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { phone } = req.body;
+            console.log(`Received request to send OTP to phone number: ${phone}`);
+            const result = await this.authService.sendOTP(phone);
+            return ApiResponse.success(res, StatusCodes.OK, "OTP sent successfully", result);
+        } catch (error) {
+            console.error("Error occurred while sending OTP:", error);
+            return next(error);
+        }
+    }
+
     registerUser = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { email, password, name } = req.body as TRegister;

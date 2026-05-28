@@ -1,9 +1,23 @@
 import z from "zod";
+import { parsePhoneNumberFromString, type PhoneNumber } from "libphonenumber-js";
 
 const loginSchema = z.object({
     email: z.email().lowercase().trim(),
     password: z.string(),
 });
+
+
+const sendOTPSchema = z.object({
+    phone: z.string().refine((value) => {
+        const phoneNumber = parsePhoneNumberFromString(value, "IN");
+        return phoneNumber?.isValid() || false;
+    }, { message: "Please provide a valid phone number." }).transform((value) => {
+        const phoneNumber = parsePhoneNumberFromString(value, "IN");
+        return phoneNumber?.number; // default to E.164 format, e.g., +919876543210
+    })
+});
+
+
 
 const registerSchema = z.object({
     email: z.email().lowercase().trim(),
@@ -11,4 +25,4 @@ const registerSchema = z.object({
     name: z.string().min(1, "Name is required").trim()
 })
 
-export {loginSchema, registerSchema}; 
+export { loginSchema, registerSchema, sendOTPSchema }; 
