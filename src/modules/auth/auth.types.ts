@@ -1,4 +1,4 @@
-import { registerSchema, sendOTPSchema, verifyOTPSchema } from "./auth.schema";
+import { refreshTokenSchema, registerSchema, sendOTPSchema, verifyOTPSchema } from "./auth.schema";
 import { Request } from "express";
 import z from "zod";
 
@@ -6,6 +6,7 @@ import z from "zod";
 type TRegister = z.infer<typeof registerSchema>;
 type TSendOTP = z.infer<typeof sendOTPSchema>;
 type TVerifyOTP = z.infer<typeof verifyOTPSchema>;
+type TRefreshToken = z.infer<typeof refreshTokenSchema>;
 
 type TVerifyOTPResponse = {
     user: {
@@ -18,7 +19,20 @@ type TVerifyOTPResponse = {
     }
 }
 
-// make `user` optional so handlers remain compatible with Express Request type
-type AuthRequest = Request & { user?: { userId: string } };
+type MeResponse = {
+    id: string;
+    phone: string;
+    name: string | null;
+    username: string | null;
+    avatar: string | null;
+    village: string | null;
+    district: string | null;
+    state: string | null;
+    createdAt: Date;
+    role: string;
+}
 
-export type { TRegister, TSendOTP, TVerifyOTP, TVerifyOTPResponse, AuthRequest };  
+// make `user` optional so handlers remain compatible with Express Request type
+type AuthRequest = Request & { user?: { phone: string; role: string } };
+
+export type { TRegister, TSendOTP, TVerifyOTP, TVerifyOTPResponse, TRefreshToken, MeResponse, AuthRequest };

@@ -29,6 +29,10 @@ const verifyOTPSchema = z.object({
     otp: z.string().length(4, { error: "OTP must be 4 digits" }),
 })
 
+const refreshTokenSchema = z.object({
+    refreshToken: z.string().min(1, "Refresh token is required"),
+});
+
 
 
 const registerSchema = z.object({
@@ -37,4 +41,4 @@ const registerSchema = z.object({
     name: z.string().min(1, "Name is required").trim()
 })
 
-export { loginSchema, registerSchema, sendOTPSchema, verifyOTPSchema }; 
+export { loginSchema, registerSchema, sendOTPSchema, verifyOTPSchema, refreshTokenSchema };

@@ -6,7 +6,8 @@ interface IEnvConfig {
     mongodbDbName: string;
     mongodbConnectionString: string;
 
-    jwtSecret: string;
+    jwtAccessTokenSecret: string;
+    jwtRefreshTokenSecret: string;
 
     msg91WidgetId: string;
     msg91AuthToken: string;

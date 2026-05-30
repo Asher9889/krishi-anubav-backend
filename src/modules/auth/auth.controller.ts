@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { TRegister, TVerifyOTP } from "./auth.types";
+import { MeResponse, TRegister, TRefreshToken, TVerifyOTP } from "./auth.types";
 import AuthService from "./auth.service";
-import { ApiResponse } from "../../utils";
+import { ApiError, ApiResponse } from "../../utils";
 import { StatusCodes } from "http-status-codes";
 import { logger } from "../../config";
 
@@ -16,7 +16,7 @@ class AuthController {
             const { phone } = req.body;
             logger.info(`Received request to send OTP to phone number: ${phone}`);
             const { message, type} = await this.authService.sendOTP(phone);
-            return ApiResponse.success(res, StatusCodes.OK, "OTP sent successfully", { requestId: message, type });
+            return ApiResponse.success(res, StatusCodes.OK, "OTP sent successfully", { reqId: message, type });
         } catch (error) {
             logger.error("Error occurred while sending OTP:"+ error);
             return next(error);
@@ -42,9 +42,38 @@ class AuthController {
                 maxAge: 1 * 60 * 60 * 1000, // 1 hour
             });
 
+            logger.info(`OTP verified for phone: ${phone}, user ID: ${user.id} and response is: ${JSON.stringify({ user, tokens: { accessToken, refreshToken }})}`);
+
             return ApiResponse.success(res, StatusCodes.OK, "OTP verified successfully", {user, tokens: { accessToken, refreshToken }});
         } catch (error) {
             logger.error("Error occurred while verifying OTP:" + error);
+            return next(error);
+        }
+    }
+
+    refreshToken = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { refreshToken } = req.body as TRefreshToken;
+            const result = await this.authService.refreshToken(refreshToken);
+            return ApiResponse.success(res, StatusCodes.OK, "Token refreshed successfully", result);
+        } catch (error) {
+            logger.error("Error occurred while refreshing token:" + error);
+            return next(error);
+        }
+    }
+
+    getMe = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const phone = req.user?.phone;
+
+            if (!phone) {
+                return next(new ApiError(StatusCodes.UNAUTHORIZED, "Unauthorized"));
+            }
+
+            const user = await this.authService.getCurrentUser(phone);
+            return ApiResponse.success(res, StatusCodes.OK, "User fetched successfully", {user});
+        } catch (error) {
+            logger.error("Error occurred while fetching current user:" + error);
             return next(error);
         }
     }

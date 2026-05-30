@@ -92,18 +92,15 @@ const userSchema = new mongoose.Schema<IUser>({
 
 
 userSchema.methods.generateJWTToken =  function() {
-    const payload: TJwtPayloadToken = { phone: this.phone };
-    if(this.role) {
-        payload.role = this.role;
-    }
-    if(this.username){
-        payload.username = this.username;
-    }
+    const payload: TJwtPayloadToken = {
+        phone: this.phone,
+        role: this.role,
+    };
 
-    const accessToken = jwt.sign(payload, envConfig.jwtSecret, { expiresIn: "1h" });
-    const secretToken = jwt.sign(payload, envConfig.jwtSecret, { expiresIn: "1d" });
+    const accessToken = jwt.sign(payload, envConfig.jwtAccessTokenSecret, { expiresIn: "1h" });
+    const refreshToken = jwt.sign(payload, envConfig.jwtRefreshTokenSecret, { expiresIn: "1d" });
 
-    return { accessToken, secretToken };
+    return { accessToken, refreshToken };
 }
 
 

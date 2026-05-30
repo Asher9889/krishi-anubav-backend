@@ -25,7 +25,6 @@ const OCCUPATIONS = {
 
 type TJwtPayloadToken = {
     phone: string;
-    username?: string;
     role?: string;
 }
 

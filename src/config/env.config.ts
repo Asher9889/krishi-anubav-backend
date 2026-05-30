@@ -16,7 +16,8 @@ const envConfig:IEnvConfig = {
 
 
     // jwt
-    jwtSecret: process.env.JWT_SECRET!
+    jwtAccessTokenSecret: process.env.JWT_ACCESS_TOKEN_SECRET!,
+    jwtRefreshTokenSecret: process.env.JWT_REFRESH_TOKEN_SECRET!
 }
 
 export default envConfig;

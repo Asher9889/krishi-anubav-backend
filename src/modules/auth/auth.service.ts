@@ -3,14 +3,15 @@ import { ApiError, generateJWTToken } from "../../utils";
 import { UserModel } from "../user";
 import { envConfig, logger, otpApi } from "../../config";
 import apiEndPoints from "../../config/apiEndPoints";
-import { en } from "zod/locales";
-import { TVerifyOTP, TVerifyOTPResponse } from "./auth.types";
+import jwt from "jsonwebtoken";
+import { MeResponse, TVerifyOTP, TVerifyOTPResponse } from "./auth.types";
+import { TJwtPayloadToken } from "../user/user.types";
 
 
 
 class AuthService {
-    
-    sendOTP = async (phone:string):Promise<{ message: string; type: string }> => {        
+
+    sendOTP = async (phone: string): Promise<{ message: string; type: string }> => {
         try {
             console.log(`Attempting to send OTP to phone number: ${phone}, url: ${envConfig.msg91SendSmsApiBaseUrl}, widgetId: ${envConfig.msg91WidgetId}, authKey: ${envConfig.msg91AuthToken}`);
             const { url, method } = apiEndPoints.auth.sendOTP
@@ -27,10 +28,72 @@ class AuthService {
                 }
             });
             return response.data;
-           
+
         } catch (error: any) {
             logger.error("Error occurred while sending OTP:", error.message);
             throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.response?.data?.message || error.response?.data || "Failed to send OTP");
+        }
+    }
+
+    refreshToken = async (refreshToken: string): Promise<TVerifyOTPResponse> => {
+        try {
+            const payload = jwt.verify(refreshToken, envConfig.jwtRefreshTokenSecret) as TJwtPayloadToken;
+
+            const user = await UserModel.findOne({ phone: payload.phone });
+
+            if (!user?._id) {
+                throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
+            }
+
+            const tokens = user.generateJWTToken();
+
+            return {
+                user: {
+                    id: user._id.toString(),
+                    phone: user.phone,
+                },
+                tokens,
+            };
+        } catch (error: any) {
+            if(error instanceof jwt.TokenExpiredError) {
+                throw new ApiError(StatusCodes.UNAUTHORIZED, "Your token has expired. Please log in again.");
+            }
+            if(error instanceof jwt.JsonWebTokenError) {
+                throw new ApiError(StatusCodes.UNAUTHORIZED, "Invalid token. Please log in again.");
+            }
+            if (error instanceof ApiError) {
+                throw error;
+            }
+            throw new ApiError(StatusCodes.UNAUTHORIZED, error?.message || "Invalid or expired refresh token");
+        }
+    }
+
+    getCurrentUser = async (phone: string): Promise<MeResponse> => {
+        try {
+            const user = await UserModel.findOne({ phone }).lean();
+
+            if (!user?._id) {
+                throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
+            }
+
+            const Retureduser =  {
+                id: user._id.toString(),
+                name: user.fullName ?? null,
+                username: user.username ?? null,
+                phone: user.phone,
+                role: user.role,
+                avatar: null,
+                village: user.address?.line2 ?? null,
+                district: user.address?.district ?? null,
+                state: user.address?.state ?? null,
+                createdAt: user.createdAt,
+            };
+            return Retureduser;
+        } catch (error: any) {
+            if (error instanceof ApiError) {
+                throw error;
+            }
+            throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error?.message || "Failed to fetch user profile");
         }
     }
 
@@ -51,44 +114,55 @@ class AuthService {
                 headers: {
                     "authkey": envConfig.msg91AuthToken,
                 }
-            })
-            if(response.data.type !== "success") {
+            });
+
+            if (response.data.code === 703) {
+                throw new ApiError(StatusCodes.BAD_REQUEST, "Otp already verifed");
+            }
+
+
+            if (response.data.type !== "success") {
+                console.log("OTP verification failed with response:", response.data);
                 throw new ApiError(StatusCodes.BAD_REQUEST, response.data.message || "OTP verification failed");
             }
 
             // 2. create an user if not exists with the phone number.
             const PhoneString = String(phone);
-            const isAlreadyRegistered = await UserModel.findOne({ phone: PhoneString }).lean();
-            
-            // 3. if user already registered, generate a token and return
-            if(isAlreadyRegistered?._id){
-                const jwtTokens = isAlreadyRegistered.generateJWTToken();
+            const isAlreadyRegistered = await UserModel.findOne({ phone: PhoneString });
+
+            // 4. if user not registered, create a new user and generate a token and return
+            if (!isAlreadyRegistered?._id) {
+                const newUser = await UserModel.create({ phone: PhoneString, isPhoneVerified: true });
+                if (!newUser._id) {
+                    throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create user");
+                }
+
+                const jwtTokens = newUser.generateJWTToken();
+
                 return {
                     user: {
-                        id: isAlreadyRegistered._id.toString(),
-                        phone: isAlreadyRegistered.phone,
+                        id: newUser._id.toString(),
+                        phone: newUser.phone,
                     },
                     tokens: jwtTokens
                 };
             }
 
-            // 4. if user not registered, create a new user and generate a token and return
-            const newUser = await UserModel.create({ phone: PhoneString, isPhoneVerified: true });
-            if(!newUser._id) {
-                throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create user");
-            }
+            // 3. if user already registered, generate a token and return
 
-            const jwtTokens = newUser.generateJWTToken();
-
+            const jwtTokens = isAlreadyRegistered.generateJWTToken();
             return {
                 user: {
-                    id: newUser._id.toString(),
-                    phone: newUser.phone,
+                    id: isAlreadyRegistered._id.toString(),
+                    phone: isAlreadyRegistered.phone,
                 },
                 tokens: jwtTokens
             };
-        } catch (error: any) {
-            throw error;            
+
+
+
+        } catch (error) {
+            throw error;
         }
     }
 
