@@ -12,7 +12,7 @@ const generateJWTToken = ( { phone, userId }: TGenerateJWTToken ):string => {
     payload = { ...payload, userId };
   }
 
-  const token = jwt.sign({ userId, phone }, envConfig.jwtSecret, { expiresIn: "1d" }); 
+  const token = jwt.sign({ userId, phone }, envConfig.jwtAccessTokenSecret, { expiresIn: "1d" }); 
   return token;
 };
 
