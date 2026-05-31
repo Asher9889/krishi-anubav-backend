@@ -1,5 +1,5 @@
 import mongoose, { Document, ObjectId } from "mongoose";
-import { OCCUPATIONS, TLanguage, LANGUAGES, TOccupation, TUserRole, USER_ROLE, TUserStatus, USER_STATUS, TJwtPayloadToken } from "./user.types";
+import { OCCUPATIONS, TLanguage, LANGUAGES, TOccupation, TUserRole, USER_ROLE, TUserStatus, USER_STATUS, TJwtPayloadToken, GENDER, TGender } from "./user.types";
 import { parsePhoneNumberFromString } from "libphonenumber-js"
 import jwt from "jsonwebtoken";
 import { envConfig } from "../../config";
@@ -16,10 +16,16 @@ interface IUser extends Document {
 
     role: TUserRole
 
+    gender?: TGender
+
+    avatar?: string | null
+
+    isProfileCompleted?: boolean
+
     preferredLanguage?: TLanguage
 
     occupation?: TOccupation
-    bio?: string
+    bio?: string | null
 
     address?: {
         line1?: string
@@ -65,6 +71,12 @@ const userSchema = new mongoose.Schema<IUser>({
     fullName: { type: String, trim: true },
 
     role: { type: String, enum: Object.values(USER_ROLE), default: USER_ROLE.USER },
+
+    avatar: { type: String, trim: true},
+
+    gender: {type: String, enum: Object.values(GENDER) },
+
+    isProfileCompleted: { type: Boolean, default: false },
 
     preferredLanguage: { type: String, enum: Object.values(LANGUAGES) },
 

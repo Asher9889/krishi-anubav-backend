@@ -10,7 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "dev": "tsx watch --env-file=.env ./src/server.ts",
-    "start": "node --env-file=.env dist/server.js"
+    "start": "node --env-file=.env dist/server.js",
+    "seed:states": "tsx --env-file=.env src/seeders/scripts/seed-state.ts"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
