@@ -31,6 +31,8 @@ interface IUser extends Document {
         line1?: string
         line2?: string
 
+        lat?: number
+        lng?: number
         city?: string
         district?: string
 
@@ -87,11 +89,13 @@ const userSchema = new mongoose.Schema<IUser>({
     address: {
         line1: { type: String },
         line2:  { type: String },
+        lat: { type: Number },
+        lng: { type: Number },
         city: { type: String },
         district: { type: String },
         state: { type: String },
         postalCode: { type: String },
-        country: { type: String },
+        country: { type: String, default: "India" },
     },
 
     isPhoneVerified: { type: Boolean, required: true, default: false },

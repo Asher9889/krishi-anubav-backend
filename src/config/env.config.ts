@@ -10,6 +10,7 @@ const envConfig:IEnvConfig = {
     mongodbDbName: process.env.MONGODB_DB_NAME!,
     mongodbConnectionString: process.env.MONGODB_CONNECTION_STRING!,
 
+    // msg91
     msg91WidgetId: process.env.MSG91_WIDGET_ID!,
     msg91AuthToken: process.env.MSG91_AUTH_KEY!,
     msg91SendSmsApiBaseUrl: process.env.MSG91_SEND_SMS_API_URL!,
@@ -17,7 +18,13 @@ const envConfig:IEnvConfig = {
 
     // jwt
     jwtAccessTokenSecret: process.env.JWT_ACCESS_TOKEN_SECRET!,
-    jwtRefreshTokenSecret: process.env.JWT_REFRESH_TOKEN_SECRET!
+    jwtRefreshTokenSecret: process.env.JWT_REFRESH_TOKEN_SECRET!,
+
+    // minio
+    minioEndpoint: process.env.MINIO_ENDPOINT!,
+    minioAccessKey: process.env.MINIO_ACCESS_KEY!,
+    minioSecretKey: process.env.MINIO_SECRET_KEY!,
+    bucketName: process.env.MINIO_BUCKET_NAME!,
 }
 
 export default envConfig;
