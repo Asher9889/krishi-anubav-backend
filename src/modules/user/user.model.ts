@@ -28,19 +28,19 @@ interface IUser extends Document {
     bio?: string | null
 
     address?: {
-        line1?: string
-        line2?: string
+        line1?: string | null
+        line2?: string | null
 
-        lat?: number
-        lng?: number
-        city?: string
-        district?: string
+        latitude?: number | null
+        longitude?: number | null
+        city?: string | null
+        district?: string | null
 
-        state?: string
+        state?: string | null
 
-        postalCode?: string
+        postalCode?: string | null
 
-        country?: string
+        country?: string | null
     }
 
     isPhoneVerified: boolean
@@ -89,8 +89,8 @@ const userSchema = new mongoose.Schema<IUser>({
     address: {
         line1: { type: String },
         line2:  { type: String },
-        lat: { type: Number },
-        lng: { type: Number },
+        latitude: { type: Number },
+        longitude: { type: Number },
         city: { type: String },
         district: { type: String },
         state: { type: String },

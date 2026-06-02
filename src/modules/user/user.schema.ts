@@ -1,6 +1,7 @@
 import z from "zod";
 import { GENDER } from "./user.types";
 import mongoose from "mongoose";
+import { UserModel } from "./user.model";
 
 const usernameSchema = z.string().trim().toLowerCase().min(3, "Username must be at least 3 characters").max(20, "Username cannot exceed 20 characters")
     .refine(
@@ -42,6 +43,21 @@ const updateUserSchema = z.object({
     bio: z.string().trim().nullable().default(null),
     avatar: z.string().trim().nullable().default(null),
     gender: z.enum(GENDER),
+    address: z.object({
+        line1: z.string().trim().nullable().default(null),
+        line2:  z.string().trim().nullable().default(null),
+
+        latitude: z.number().nullable().default(null),
+        longitude: z.number().nullable().default(null),
+        city: z.string().trim().nullable().default(null),
+        district: z.string().trim().nullable().default(null),
+
+        state: z.string().trim().nullable().default(null),
+
+        postalCode: z.number().nullable().default(null),
+
+        // country: z.string().trim(),
+    }),
     isProfileCompleted: z.boolean().default(false),
 });
 

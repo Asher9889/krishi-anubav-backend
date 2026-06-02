@@ -29,23 +29,46 @@ class UserService {
                 throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
             }
 
-            user.fullName = data.fullName.trim();
-            user.username = data.username.trim().toLowerCase();
-            user.bio = data.bio.trim() ?? null;
-            user.avatar = data.avatar ?? null;
+            user.fullName = data.fullName;
+            user.username = data.username;
+            user.bio = data.bio;
+            user.avatar = data.avatar;
             user.gender = data.gender;
             user.isProfileCompleted = data.isProfileCompleted;
+            user.address = {
+                line1: data.address.line1,
+                line2: data.address.line2,
 
-            await user.save();
+                latitude: data.address.latitude, 
+                longitude: data.address.longitude,
+
+                state: data.address.state,
+                city: data.address.city,
+            }
+            const updatedUser = await user.save();
+            if(!updatedUser._id){
+                throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update user");
+            }
 
             return {
-                id: user._id.toString(),
-                fullName: user.fullName ?? "",
+                id: updatedUser._id.toString(),
+                fullName:  user.fullName,
                 username: user.username ?? "",
                 bio: user.bio ?? "",
-                avatar: user.avatar ?? null,
+                avatar: user.avatar,
                 gender: user.gender,
-                isProfileCompleted: user.isProfileCompleted ?? false,
+                isProfileCompleted: user.isProfileCompleted,
+                address: {
+                    line1: user.address?.line1 ?? null,
+                    line2: user.address?.line2 ?? null,
+
+                    latitude: Number(user.address?.latitude) ?? null,
+                    longitude: Number(user.address?.longitude) ?? null,
+
+                    city: user.address?.city ?? null,
+                    district: user.address?.district ?? null,
+                    state: user.address?.state ?? null,
+                }
             };
         } catch (error) {
             if (error instanceof ApiError) {

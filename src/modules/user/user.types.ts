@@ -1,3 +1,6 @@
+import { updateUserSchema } from "./user.schema"
+import { z } from "zod";
+
 const USER_ROLE = {
     ADMIN: "ADMIN",
     USER: "USER",
@@ -37,14 +40,6 @@ const GENDER = {
     OTHER: "OTHER"
 } as const
 
-type TUpdateUserRequest = {
-    fullName: string;
-    username: string;
-    bio: string;
-    avatar: string | null;
-    gender: TGender;
-    isProfileCompleted: boolean;
-}
 
 type TUpdateUserParams = {
     id: string;
@@ -58,6 +53,17 @@ type TUserProfileResponse = {
     avatar: string | null;
     gender: TGender;
     isProfileCompleted: boolean;
+    address: {
+        line1: string | null;
+        line2: string | null;
+
+        latitude: number | null;
+        longitude: number | null;
+        city: string | null;
+        district: string | null;
+
+        state: string | null;
+    }
 }
 
 type TJwtPayloadToken = {
@@ -70,5 +76,7 @@ type TLanguage = typeof LANGUAGES[keyof typeof LANGUAGES];
 type TOccupation = typeof OCCUPATIONS[keyof typeof OCCUPATIONS];
 type TUserStatus = typeof USER_STATUS[keyof typeof USER_STATUS];
 type TGender = typeof GENDER[keyof typeof GENDER];
+
+type TUpdateUserRequest = z.infer<typeof updateUserSchema>;
 
 export { USER_ROLE, LANGUAGES, OCCUPATIONS, USER_STATUS, GENDER, type TJwtPayloadToken, type TUserRole, type TLanguage, type TOccupation, type TUserStatus, type TGender, type TUpdateUserRequest, type TUpdateUserParams, type TUserProfileResponse }
