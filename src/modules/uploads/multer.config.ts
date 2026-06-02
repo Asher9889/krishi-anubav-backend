@@ -1,4 +1,6 @@
 import multer from "multer";
+import { ApiError } from "../../utils";
+import { StatusCodes } from "http-status-codes";
 
 
 
@@ -14,11 +16,11 @@ const upload = multer({
     fileFilter: (req, file, cb) => {
       
         if(!acceptedImageTypes.includes(file.mimetype)) {
-            return cb(new Error("Only JPEG, PNG, and WEBP images are allowed"));
+            return cb(new ApiError(StatusCodes.BAD_REQUEST, "Only JPEG, PNG, and WEBP images are allowed"));
         }
 
         if(file.size > maxFileSize) {
-            return cb(new Error("File size exceeds the limit of 5MB"));
+            return cb(new ApiError(StatusCodes.BAD_REQUEST, "File size exceeds the limit of 5MB"));
         }
 
         return cb(null, true);
