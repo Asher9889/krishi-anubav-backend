@@ -45,6 +45,7 @@ class UserService {
                 state: data.address.state,
                 city: data.address.city,
             }
+            user.phone = user.phone; // to trigger phone number validation
             const updatedUser = await user.save();
             if(!updatedUser._id){
                 throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update user");
@@ -58,6 +59,7 @@ class UserService {
                 avatar: user.avatar,
                 gender: user.gender,
                 isProfileCompleted: user.isProfileCompleted,
+                phone: user.phone,
                 address: {
                     line1: user.address?.line1 ?? null,
                     line2: user.address?.line2 ?? null,

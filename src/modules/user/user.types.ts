@@ -53,6 +53,7 @@ type TUserProfileResponse = {
     avatar: string | null;
     gender: TGender;
     isProfileCompleted: boolean;
+    phone: string;
     address: {
         line1: string | null;
         line2: string | null;
