@@ -2,11 +2,12 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { StatusCodes } from "http-status-codes";
 import { ApiError } from "../utils";
-import { envConfig } from "../config";
+import { envConfig, logger } from "../config";
 import { TJwtPayloadToken } from "../modules/user/user.types";
 
 const authenticate = (req: Request, res: Response, next: NextFunction) => {
     try {
+        logger.info("Authenticating user...");
         const authorizationHeader = req.headers.authorization;
 
         if (!authorizationHeader) {
@@ -26,10 +27,11 @@ const authenticate = (req: Request, res: Response, next: NextFunction) => {
         }
 
         req.user = {
+            id: decoded.id,
             phone: decoded.phone,
             role: decoded.role,
         };
-
+        logger.info("User authenticated successfully");
         next();
     } catch (error: any) {
         if (error instanceof jwt.TokenExpiredError) {
@@ -44,6 +46,7 @@ const authenticate = (req: Request, res: Response, next: NextFunction) => {
             return next(error);
         }
 
+        logger.error("Error occurred while authenticating user:", error);
         return next(new ApiError(StatusCodes.UNAUTHORIZED, error?.message || "Unauthorized"));
     }
 };

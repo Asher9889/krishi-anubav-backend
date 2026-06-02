@@ -109,6 +109,7 @@ const userSchema = new mongoose.Schema<IUser>({
 
 userSchema.methods.generateJWTToken =  function() {
     const payload: TJwtPayloadToken = {
+        id: this._id.toString(),
         phone: this.phone,
         role: this.role,
     };

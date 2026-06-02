@@ -23,10 +23,10 @@ class UserController {
         }
     };
 
-    updateUser = async (req: Request, res: Response, next: NextFunction) => {
+    updateMe = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const id = req.params.id as string;
-            const result = await this.userService.updateUser(id, req.body as TUpdateUserRequest);
+            const id = req.user?.id as string; 
+            const result = await this.userService.updateMe(id, req.body as TUpdateUserRequest);
 
             return ApiResponse.success(res, StatusCodes.OK, "User updated successfully", result);
         } catch (error) {

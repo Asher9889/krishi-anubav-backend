@@ -21,57 +21,17 @@ class UserService {
         }
     }
 
-    updateUser = async (id: string, data: TUpdateUserRequest): Promise<TUserProfileResponse> => {
+    updateMe = async (id: string, field: Record<string, unknown>) => {
         try {
+            console.log("Updating user with id:", id, "and field:", field);
             const user = await UserModel.findById(id);
-
             if (!user?._id) {
                 throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
             }
+            const updates = this.flattenObject(field);
+            await UserModel.findByIdAndUpdate(id, { $set: updates }, { new: false }).lean();
+            return field;
 
-            user.fullName = data.fullName;
-            user.username = data.username;
-            user.bio = data.bio;
-            user.avatar = data.avatar;
-            user.gender = data.gender;
-            user.isProfileCompleted = data.isProfileCompleted;
-            user.address = {
-                line1: data.address.line1,
-                line2: data.address.line2,
-
-                latitude: data.address.latitude, 
-                longitude: data.address.longitude,
-
-                state: data.address.state,
-                city: data.address.city,
-            }
-            user.phone = user.phone; // to trigger phone number validation
-            const updatedUser = await user.save();
-            if(!updatedUser._id){
-                throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update user");
-            }
-
-            return {
-                id: updatedUser._id.toString(),
-                fullName:  user.fullName,
-                username: user.username ?? "",
-                bio: user.bio ?? "",
-                avatar: user.avatar,
-                gender: user.gender,
-                isProfileCompleted: user.isProfileCompleted,
-                phone: user.phone,
-                address: {
-                    line1: user.address?.line1 ?? null,
-                    line2: user.address?.line2 ?? null,
-
-                    latitude: Number(user.address?.latitude) ?? null,
-                    longitude: Number(user.address?.longitude) ?? null,
-
-                    city: user.address?.city ?? null,
-                    district: user.address?.district ?? null,
-                    state: user.address?.state ?? null,
-                }
-            };
         } catch (error) {
             if (error instanceof ApiError) {
                 throw error;
@@ -80,6 +40,33 @@ class UserService {
             throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update user");
         }
     }
+
+    flattenObject = (obj: Record<string, unknown>, prefix = ""): Record<string, unknown> => {
+        return Object.entries(obj).reduce(
+            (acc, [key, value]) => {
+                const path = prefix ? `${prefix}.${key}` : key;
+
+                if (
+                    value &&
+                    typeof value === "object" &&
+                    !Array.isArray(value)
+                ) {
+                    Object.assign(
+                        acc,
+                        this.flattenObject(
+                            value as Record<string, unknown>,
+                            path
+                        )
+                    );
+                } else {
+                    acc[path] = value;
+                }
+
+                return acc;
+            },
+            {} as Record<string, unknown>
+        );
+    };
 }
 
 export default UserService;

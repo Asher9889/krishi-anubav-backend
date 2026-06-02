@@ -68,6 +68,7 @@ type TUserProfileResponse = {
 }
 
 type TJwtPayloadToken = {
+    id: string;
     phone: string;
     role?: string;
 }

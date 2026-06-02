@@ -32,32 +32,32 @@ const updateUserParamsSchema = z.object({
 });
 
 const updateUserSchema = z.object({
-    fullName: z.string().trim().min(1, "Full name is required"),
+    fullName: z.string().trim().min(1, "Full name is required").optional(),
     username: z
         .string()
         .trim()
         .toLowerCase()
         .min(3, "Username must be at least 3 characters")
         .max(30, "Username cannot exceed 30 characters")
-        .regex(/^[a-z0-9_]+$/, "Only lowercase letters, numbers and underscore are allowed"),
-    bio: z.string().trim().nullable().default(null),
-    avatar: z.string().trim().nullable().default(null),
-    gender: z.enum(GENDER),
+        .regex(/^[a-z0-9_]+$/, "Only lowercase letters, numbers and underscore are allowed").optional(),
+    bio: z.string().trim().nullable().optional(),
+    avatar: z.string().trim().nullable().optional(),
+    gender: z.enum(GENDER).optional(),
     address: z.object({
-        line1: z.string().trim().nullable().default(null),
-        line2:  z.string().trim().nullable().default(null),
+        line1: z.string().trim().optional(),
+        line2:  z.string().trim().optional(),
 
-        latitude: z.number().nullable().default(null),
-        longitude: z.number().nullable().default(null),
-        city: z.string().trim().nullable().default(null),
-        district: z.string().trim().nullable().default(null),
+        latitude: z.number().optional(),
+        longitude: z.number().optional(),
+        city: z.string().trim().optional(),
+        district: z.string().trim().optional(),
 
-        state: z.string().trim().nullable().default(null),
+        state: z.string().trim().optional(),
 
-        postalCode: z.number().nullable().default(null),
+        postalCode: z.number().optional(),
 
         // country: z.string().trim(),
-    }),
+    }).optional(),
     isProfileCompleted: z.boolean().default(false),
 });
 
