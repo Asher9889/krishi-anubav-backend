@@ -1,7 +1,28 @@
 import mongoose, { Schema } from "mongoose";
 
-const agriculturalNewsSchema = new Schema(
+interface INews extends mongoose.Document {
+    id: string;
+  tag?: string;
+  category: string;
+  title: string;
+  shortSummary: string;
+  fullDescription?: string;
+  htmlDescription: string;
+  pdfUrl?: string;
+  source?: string;
+  publishDate: Date;
+  updatedAt?: string;
+  createdAt?: string;
+}
+
+const agriculturalNewsSchema = new Schema<INews>(
   {
+    id: {
+        type: String,
+    },
+    tag: {
+        type: String
+    },
     category: {
       type: String,
       required: true,
@@ -44,9 +65,12 @@ const agriculturalNewsSchema = new Schema(
       required: true,
       index: true
     },
-  },
-  {
-    timestamps: true,
+    updatedAt: {
+      type: String
+    },
+    createdAt: {
+      type: String
+    }
   }
 );
 
@@ -74,6 +98,6 @@ const agriculturalNewsSchema = new Schema(
 // );
 
 
-const NewsModel = mongoose.model("AgriculturalNews", agriculturalNewsSchema, "krishi_news");
+const NewsModel = mongoose.model<INews>("News", agriculturalNewsSchema, "news");
 
 export default NewsModel;
