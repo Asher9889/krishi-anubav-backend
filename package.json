@@ -14,6 +14,7 @@
     "seed:states": "tsx --env-file=.env src/seeders/scripts/seed-state.ts"
   },
   "devDependencies": {
+    "@types/compression": "^1.8.1",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.1.0",
@@ -26,6 +27,7 @@
     "@aws-sdk/client-s3": "^3.1057.0",
     "argon2": "^0.44.0",
     "axios": "^1.16.1",
+    "compression": "^1.8.1",
     "express": "^5.2.1",
     "http-status-codes": "^2.3.0",
     "jsonwebtoken": "^9.0.3",

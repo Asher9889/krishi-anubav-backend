@@ -3,11 +3,16 @@ import { envConfig, logger } from "./config/index";
 import apiRoutes from "./routes/index";
 import { globalErrorHandler, routeNotExistsHandler } from "./utils";
 import { connectMongoDB } from "./db";
+import compression from "compression";
+
+connectMongoDB();
 
 const app = express();
-app.use(express.json())
+app.use(express.json());
 
-connectMongoDB()
+
+app.use(compression());
+
 
 app.get("/", (req, res) => {
   res.send("Hey there, I am Alive!");
