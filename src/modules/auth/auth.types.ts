@@ -1,6 +1,7 @@
 import { refreshTokenSchema, registerSchema, sendOTPSchema, verifyOTPSchema } from "./auth.schema";
 import { Request } from "express";
 import z from "zod";
+import { TGender } from "../user/user.types";
 
 
 type TRegister = z.infer<typeof registerSchema>;
@@ -22,9 +23,12 @@ type TVerifyOTPResponse = {
 type MeResponse = {
     id: string;
     phone: string;
-    name: string | null;
+    fullName: string | null;
     username: string | null;
     avatar: string | null;
+    bio: string | null;
+    gender: TGender | null;
+    occupation: string | null;
     village: string | null;
     district: string | null;
     state: string | null;

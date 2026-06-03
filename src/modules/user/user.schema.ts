@@ -43,6 +43,7 @@ const updateUserSchema = z.object({
     bio: z.string().trim().nullable().optional(),
     avatar: z.string().trim().nullable().optional(),
     gender: z.enum(GENDER).optional(),
+    occupation: z.string().trim().optional(),
     address: z.object({
         line1: z.string().trim().optional(),
         line2:  z.string().trim().optional(),

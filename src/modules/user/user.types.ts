@@ -21,18 +21,21 @@ const LANGUAGES = {
 
 
 const OCCUPATIONS = {
-    FARMER: 'FARMER',
-    AGRONOMIST: "agronomist",
-    VETERINARIAN: "veterinarian",
-    RESEARCHER: "researcher",
-    STUDENT: "student",
-    DEALER: "dealer",
-    AGRI_EXPERT: 'AGRI_EXPERT',
-    TRADER: 'TRADER',
-    VENDOR: 'VENDOR',
-    AGRI_WORKER: 'AGRI_WORKER',
-    OTHER: 'OTHER',
-} as const
+  FARMER: "Farmer",
+  AGRONOMIST: "Agronomist",
+  VETERINARIAN: "Veterinarian",
+  AGRICULTURE_STUDENT: "Agriculture Student",
+  RESEARCHER: "Researcher",
+  AGRICULTURE_OFFICER: "Agriculture Officer",
+  TRADER: "Trader",
+  COMMISSION_AGENT: "Commission Agent",
+  INPUT_DEALER: "Input Dealer",
+  FARM_CONSULTANT: "Farm Consultant",
+  DAIRY_FARMER: "Dairy Farmer",
+  POULTRY_FARMER: "Poultry Farmer",
+  HORTICULTURE_FARMER: "Horticulture Farmer",
+  OTHER: "Other",
+} as const;
 
 const GENDER = {
     MALE: "MALE",

@@ -78,11 +78,14 @@ class AuthService {
 
             const Retureduser =  {
                 id: user._id.toString(),
-                name: user.fullName ?? null,
+                fullName: user.fullName ?? null,
                 username: user.username ?? null,
                 phone: user.phone,
                 role: user.role,
-                avatar: null,
+                bio: user.bio ?? null,
+                gender: user.gender ?? null,
+                occupation: user.occupation ?? null,
+                avatar: user.avatar ?? null,
                 village: user.address?.line2 ?? null,
                 district: user.address?.district ?? null,
                 state: user.address?.state ?? null,
