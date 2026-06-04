@@ -9,7 +9,7 @@ class UploadService {
     uploadAvatar = async (file: Express.Multer.File, userId: string, filename: string) => {
        try {
          const fileExtension = file.mimetype.split("/")[1];
-         const objectKey = `avatars/${userId}/avatar.${fileExtension}`;
+         const objectKey = `avatars/${userId}/avatar-${Date.now()}.${fileExtension}`;
          await minioService.sendFileToMinio(file, objectKey);
          const publicUrl = minioService.generatePublicAccessUrl(objectKey);
          return { url: publicUrl };

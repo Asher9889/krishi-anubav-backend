@@ -8,7 +8,7 @@ const router = express.Router();
 
 // Define news-related routes here
 
-router.get("/", authenticate, newsController.getNews);
+router.get("/", newsController.getNews);
 router.get("/:id", paramsValidate(newsIdSchema), newsController.getNewsById);
 
 
