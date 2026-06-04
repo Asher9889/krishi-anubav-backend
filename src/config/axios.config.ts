@@ -12,4 +12,13 @@ const otpApi = axios.create({
     }
 })
 
+const aiApi = axios.create({
+    baseURL: envConfig.aiApiBaseUrl,
+    headers: {
+        "Content-Type": "application/json",
+    }
+})
+
+export {  aiApi };
+
 export default otpApi;

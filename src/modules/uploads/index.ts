@@ -1,3 +1,3 @@
 import uploadRoutes from "./upload.routes";
-
-export { uploadRoutes };
+import upload from "./multer.config";
+export { uploadRoutes, upload as multerUpload };

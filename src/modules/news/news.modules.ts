@@ -6,4 +6,5 @@ const newsService = new NewsService();
 const newsController = new NewsController(newsService);
 
 
+
 export { newsController, newsService };

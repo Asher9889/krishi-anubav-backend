@@ -12,5 +12,6 @@ router.get("/check-username", queryValidate(checkUsernameSchema), userController
 router.patch("/me",  authenticate,
     // paramsValidate(updateUserParamsSchema),
      schemaValidate(updateUserSchema), userController.updateMe);
+     
 
 export default router;

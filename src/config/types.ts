@@ -21,6 +21,9 @@ interface IEnvConfig {
     msg91AuthToken: string;
     msg91SendSmsApiBaseUrl: string;
 
+    //Ai
+    aiApiBaseUrl: string;
+
 }
 
 

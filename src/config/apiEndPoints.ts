@@ -3,7 +3,6 @@ import envConfig from "./env.config";
 const apiEndPoints = {
 
     auth: {
-
         sendOTP: {
             url: "/sendOtp",
             method: "POST",
@@ -13,6 +12,12 @@ const apiEndPoints = {
             method: "POST",
         },
     },
+    AI: {
+        createPost: {
+            url: "/quick-upload",
+            method: "POST",
+        },
+    }
 };
 
 export default apiEndPoints;

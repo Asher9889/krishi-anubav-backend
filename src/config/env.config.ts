@@ -15,6 +15,9 @@ const envConfig:IEnvConfig = {
     msg91AuthToken: process.env.MSG91_AUTH_KEY!,
     msg91SendSmsApiBaseUrl: process.env.MSG91_SEND_SMS_API_URL!,
 
+    // Ai
+    aiApiBaseUrl: process.env.AI_API_BASE_URL!,
+
 
     // jwt
     jwtAccessTokenSecret: process.env.JWT_ACCESS_TOKEN_SECRET!,
