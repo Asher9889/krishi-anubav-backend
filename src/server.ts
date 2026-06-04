@@ -10,7 +10,7 @@ connectMongoDB();
 
 const app = express();
 app.use(express.json());
-app.use(PinoHttp({ logger }));
+app.use(PinoHttp());
 
 
 app.use(compression());
