@@ -4,11 +4,13 @@ import apiRoutes from "./routes/index";
 import { globalErrorHandler, routeNotExistsHandler } from "./utils";
 import { connectMongoDB } from "./db";
 import compression from "compression";
+import PinoHttp from "pino-http";
 
 connectMongoDB();
 
 const app = express();
 app.use(express.json());
+app.use(PinoHttp({ logger }));
 
 
 app.use(compression());
