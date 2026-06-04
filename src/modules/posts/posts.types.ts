@@ -1,3 +1,6 @@
+import z from "zod";
+import { getPostsSchema } from "./posts.schema";
+
 type TCreatePostPayloadDTO = {
     name: string; location: string, state: string, district: string, knowledge: string
 }
@@ -8,4 +11,6 @@ type TCreatePostDTO = {
     images: Express.Multer.File[];
 }
 
-export type { TCreatePostPayloadDTO, TCreatePostDTO };
+
+type TGetPostsPayload = z.infer<typeof getPostsSchema>;
+export type { TCreatePostPayloadDTO, TCreatePostDTO, TGetPostsPayload };

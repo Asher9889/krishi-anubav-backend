@@ -1,14 +1,15 @@
 import { StatusCodes } from "http-status-codes";
 import { UserModel } from "../user";
-import { TCreatePostDTO } from "./posts.types";
+import { TCreatePostDTO, TGetPostsPayload } from "./posts.types";
 import { ApiError } from "../../utils";
 import { aiApi, apiEndPoints } from "../../config";
 import PostModel from "./post.model";
-import mongoose from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
 import { } from "mongoose";
 
 
 class PostsService {
+
     createPost = async (post: TCreatePostDTO): Promise<{ success: boolean }> => {
 
         const { userId, postData, images } = post;
@@ -55,6 +56,31 @@ class PostsService {
             }
 
             return { success: true };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    getPosts = async ({userId, body}: {userId: string, body: TGetPostsPayload}) => {
+        try {
+            const { pagination } = body;
+            const limit = pagination?.limit || 10;
+            const page = pagination?.page || 1;
+            const skip = (page - 1) * limit;
+            const id = new mongoose.Types.ObjectId(userId);
+            console.log("Fetching posts for userId:", userId, "with pagination:", { page, limit });
+
+            const posts = await PostModel.find({ userId: id, isActive: true }).sort({ createdAt: -1 }).limit(limit).skip(skip).lean();
+            const formattedPosts = posts.map(({_id, userId, ...post}, index) => {
+                return {
+                    id: _id.toString(), 
+                    userId: userId.toString(), 
+                    ...post,
+                };
+            });
+ 
+            const totalPosts = await PostModel.countDocuments({ userId: id, isActive: true });
+            return { posts: formattedPosts, totalPosts };
         } catch (error) {
             throw error;
         }

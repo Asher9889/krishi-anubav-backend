@@ -1,8 +1,7 @@
 import mongoose, { Schema } from "mongoose";
-import { extend } from "zod/mini";
 
 interface IKnowledgePost extends mongoose.Document {
-  userId: mongoose.Schema.Types.ObjectId;
+  userId: mongoose.Types.ObjectId;
 
   name: string;
   location: string;
@@ -22,7 +21,7 @@ interface IKnowledgePost extends mongoose.Document {
 const knowledgePostSchema = new Schema<IKnowledgePost>(
   {
     userId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongoose.Types.ObjectId,
       ref: 'User',
       required: true,
       index: true,
@@ -83,6 +82,7 @@ const knowledgePostSchema = new Schema<IKnowledgePost>(
   },
   {
     timestamps: true,
+    versionKey: false,
   }
 );
 
