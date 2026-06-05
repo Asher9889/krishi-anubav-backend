@@ -15,6 +15,8 @@ class PostsController {
 
     createPost = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
         try {
+            console.log("Received request to create post with body:", req.body); // Log the incoming request body for debugging
+            console.log("Received files for post creation:", req.files); // Log the incoming files for debugging
             const userId = req.user?.id; // Assuming user ID is available in the request object after authentication
             if (!userId) {
                 throw new ApiError(StatusCodes.UNAUTHORIZED, "User not authenticated");
