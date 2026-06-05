@@ -21,7 +21,7 @@ class PostsService {
             const { url, method } = apiEndPoints.AI.createPost
 
             const aiPayload = {
-                userInfo: postData,
+                userinfo: postData,
                 knowledge: postData.knowledge,
             }
 
