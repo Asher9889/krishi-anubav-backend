@@ -24,9 +24,11 @@ class PostsService {
                 userInfo: postData,
                 knowledge: postData.knowledge,
             }
+
+            console.log("Sending request to AI API with payload:", aiPayload); // Log the payload being sent to the AI API for debugging
             const response = await aiApi.request({
-                method: method,
                 url: url,
+                method: method,
                 data: aiPayload
             });
 
