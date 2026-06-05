@@ -36,6 +36,6 @@ class MinioService {
 
 }
 
-const minioService =   new MinioService();
+const minioService =  new MinioService();
 
 export default minioService;

@@ -5,6 +5,7 @@ import { StatusCodes } from "http-status-codes";
 
 
 const schemaValidate = (schema: ZodObject) => (req: Request, res: Response, next: NextFunction) => {
+    console.log("Validating request body:", req.body); // Log the request body for debugging
     const result = schema.safeParse(req.body);
 
     if (!result.success) {

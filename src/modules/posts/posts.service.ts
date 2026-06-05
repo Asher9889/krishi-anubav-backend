@@ -4,8 +4,8 @@ import { TCreatePostDTO, TGetPostsPayload } from "./posts.types";
 import { ApiError } from "../../utils";
 import { aiApi, apiEndPoints } from "../../config";
 import PostModel from "./post.model";
-import mongoose, { Mongoose } from "mongoose";
-import { } from "mongoose";
+import mongoose from "mongoose";
+import minioService from "../../shared/storage/s3.service";
 
 
 class PostsService {
@@ -36,7 +36,24 @@ class PostsService {
                 throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create post using AI API");
             }
 
+            const imageUrls = await Promise.all(
+                images.map(async (file) => {
+                    const key = `posts/${userId}/${crypto.randomUUID()}_${file.originalname}`;
+
+                    await minioService.sendFileToMinio(file, key);
+
+                    return {
+                        url: minioService.generatePublicAccessUrl(key),
+                    };
+                })
+            );
+
+            const imageUrlsList = imageUrls.map((obj) => obj.url);
+
+            console.log("Uploaded image urls:", imageUrlsList); // Log the uploaded image urls for debugging
+
             const userIdObjectId = new mongoose.Types.ObjectId(userId);
+            console.log("Creating post with userId:", userIdObjectId, "and postData:", postData); // Log the post creation details for debugging
             const post = new PostModel({
                 userId: userIdObjectId,
                 name: postData.name,
@@ -44,7 +61,7 @@ class PostsService {
                 state: postData.state,
                 district: postData.district,
                 knowledge: postData.knowledge,
-                images: images.map(file => file.path),
+                images: imageUrlsList,
                 likesCount: 0,
                 commentsCount: 0,
                 isActive: true,
@@ -61,24 +78,24 @@ class PostsService {
         }
     }
 
-    getPosts = async ({userId, body}: {userId: string, body: TGetPostsPayload}) => {
+    getPosts = async ({ userId, query }: { userId: string, query: TGetPostsPayload }) => {
         try {
-            const { pagination } = body;
-            const limit = pagination?.limit || 10;
-            const page = pagination?.page || 1;
+            const {limit = 20, page=1} = query;
+            // const limit = pagination?.limit || 10;
+            // const page = pagination?.page || 1;
             const skip = (page - 1) * limit;
             const id = new mongoose.Types.ObjectId(userId);
             console.log("Fetching posts for userId:", userId, "with pagination:", { page, limit });
 
             const posts = await PostModel.find({ userId: id, isActive: true }).sort({ createdAt: -1 }).limit(limit).skip(skip).lean();
-            const formattedPosts = posts.map(({_id, userId, ...post}, index) => {
+            const formattedPosts = posts.map(({ _id, userId, ...post }, index) => {
                 return {
-                    id: _id.toString(), 
-                    userId: userId.toString(), 
+                    id: _id.toString(),
+                    userId: userId.toString(),
                     ...post,
                 };
             });
- 
+
             const totalPosts = await PostModel.countDocuments({ userId: id, isActive: true });
             return { posts: formattedPosts, totalPosts };
         } catch (error) {

@@ -4,6 +4,10 @@ import { ApiError } from "../utils";
 import { StatusCodes } from "http-status-codes";
 
 const queryValidate = (schema: ZodObject<any>) => (req: Request, res: Response, next: NextFunction) => {
+
+    console.log("Validating query parameters:", req.query); // Log the incoming query parameters for debugging
+
+
     const result = schema.safeParse(req.query);
 
     if (!result.success) {
@@ -11,7 +15,8 @@ const queryValidate = (schema: ZodObject<any>) => (req: Request, res: Response, 
         throw new ApiError(StatusCodes.BAD_REQUEST, "Please provide valid data", errors);
     }
 
-   // req.query = result.data as any;
+    // req.query = result.data as any;
+    // req.validatedQuery = result.data;
     next();
 };
 

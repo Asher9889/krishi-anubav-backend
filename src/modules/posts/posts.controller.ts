@@ -13,7 +13,6 @@ class PostsController {
         this.postsService = postsService;
     }
 
-
     createPost = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
         try {
             const userId = req.user?.id; // Assuming user ID is available in the request object after authentication
@@ -22,9 +21,6 @@ class PostsController {
             }
             const postData = req.body as TCreatePostPayloadDTO; // Assuming post data is sent in the request body
             const images = req.files as Express.Multer.File[]; // Assuming images are uploaded using multer
-
-            console.log("Received post data:", postData);
-            console.log("Received images:", images);
 
             const { success } = await this.postsService.createPost({ userId, postData, images });
             return ApiResponse.success(res, StatusCodes.OK, "Post created successfully", { success });
@@ -36,13 +32,16 @@ class PostsController {
 
     getPosts = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
         try {
-            const body = req.body as TGetPostsPayload;
+            const query = req.query as unknown as TGetPostsPayload; // Assuming query parameters are sent in the request query
+
+            console.log("Received query parameters for getPosts:", query); // Log the received query parameters for debugging
+
             const userId = req.user?.id; // Assuming user ID is available in the request object after authentication
 
             if (!userId) {
                 throw new ApiError(StatusCodes.UNAUTHORIZED, "User not authenticated");
             }
-            const posts = await this.postsService.getPosts({userId, body});
+            const posts = await this.postsService.getPosts({userId, query});
             return ApiResponse.success(res, StatusCodes.OK, "Posts retrieved successfully", posts); // Placeholder response
         } catch (error) {
             return next(error);
