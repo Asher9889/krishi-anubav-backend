@@ -86,6 +86,8 @@ const knowledgePostSchema = new Schema<IKnowledgePost>(
   }
 );
 
+knowledgePostSchema.index({ createdAt: -1, _id: -1 });
+
 export const PostModel = mongoose.model<IKnowledgePost>('Post', knowledgePostSchema);
 
 export default PostModel;

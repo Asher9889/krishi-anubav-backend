@@ -16,7 +16,7 @@ const queryValidate = (schema: ZodObject<any>) => (req: Request, res: Response, 
     }
 
     // req.query = result.data as any;
-    // req.validatedQuery = result.data;
+    req.validatedQuery = result.data;
     next();
 };
 

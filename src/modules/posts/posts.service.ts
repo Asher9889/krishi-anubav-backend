@@ -69,8 +69,12 @@ class PostsService {
                 isActive: true,
             });
 
-            const result = await post.save();
-            if (!result._id) {
+            const [result, postCount] = await Promise.allSettled([
+                post.save(),
+                UserModel.findByIdAndUpdate(userIdObjectId, { $inc: { postsCount: 1 } }).lean()
+            ]);
+
+            if (!result.status || result.status !== "fulfilled") {
                 throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create Post.");
             }
 

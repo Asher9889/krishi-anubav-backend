@@ -43,6 +43,10 @@ interface IUser extends Document {
         country?: string | null
     }
 
+    followersCount: number,
+    followingCount: number,
+    postsCount: number,
+
     isPhoneVerified: boolean
 
     status: TUserStatus,
@@ -97,6 +101,20 @@ const userSchema = new mongoose.Schema<IUser>({
         postalCode: { type: String },
         country: { type: String, default: "India" },
     },
+
+    followersCount: {
+        type: Number,
+        default: 0
+    },
+    followingCount: {
+        type: Number,
+        default: 0
+    },
+    postsCount: {
+        type: Number,
+        default: 0
+    },
+    
 
     isPhoneVerified: { type: Boolean, required: true, default: false },
 
