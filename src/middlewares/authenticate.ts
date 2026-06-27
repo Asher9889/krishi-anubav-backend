@@ -3,8 +3,8 @@ import jwt from "jsonwebtoken";
 import { StatusCodes } from "http-status-codes";
 import { ApiError } from "../utils";
 import { envConfig, logger } from "../config";
-import { TJwtPayloadToken } from "../modules/user/user.types";
-import { UserModel } from "../modules/user";
+import type { TJwtPayloadToken } from "../modules/user/user.types";
+import { UserModel } from "../modules/user/user.model";
 import mongoose from "mongoose";
 
 const authenticate = async (req: Request, res: Response, next: NextFunction) => {

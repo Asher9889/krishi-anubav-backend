@@ -47,14 +47,13 @@ class PostLikeService {
     unlikePost = async (postId: string, userId: string): Promise<{ liked: boolean }> => {
         const session = await mongoose.startSession();
         try {
-            const existing = await PostLikeModel.findOne({ postId, userId }).lean();
+            session.startTransaction();
+            const deletedLike = await PostLikeModel.findOneAndDelete({ postId, userId }, { session });
 
-            if (!existing) {
+            if (!deletedLike) {
                 throw new ApiError(StatusCodes.NOT_FOUND, "You have not liked this post");
             }
 
-            session.startTransaction();
-            await PostLikeModel.findOneAndDelete({ postId, userId });
             await PostModel.findByIdAndUpdate(postId, { $inc: { likesCount: -1 } }, { session });
             await session.commitTransaction();
 

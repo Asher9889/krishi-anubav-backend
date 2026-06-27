@@ -1,7 +1,6 @@
 import express from "express";
-import { authenticate } from "../../middlewares";
-import paramsValidate from "../../middlewares/paramsValidate";
-import queryValidate from "../../middlewares/queryValidate";
+import { authenticate, paramsValidate, queryValidate } from "../../middlewares";
+
 import { postLikeController } from "./post-like.module";
 import { postIdParamsSchema, userIdParamsSchema, getLikesQuerySchema, getLikedPostsQuerySchema } from "./post-like.schema";
 
