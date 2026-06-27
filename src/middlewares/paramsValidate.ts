@@ -10,6 +10,8 @@ const paramsValidate = (schema: ZodObject<any>) => (req: Request, res: Response,
         const errors = result.error.issues.map((error) => ({ field: error.path[0], message: error.message }));
         throw new ApiError(StatusCodes.BAD_REQUEST, "Please provide valid data", errors);
     }
+
+    req.validatedParams = result.data;
     
     next();
 };

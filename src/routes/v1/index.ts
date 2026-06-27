@@ -7,6 +7,7 @@ import { newsRoutes } from "../../modules/news";
 import { postRoutes } from "../../modules/posts";
 import { feedRoutes } from "../../modules/feed";
 import { followRoutes } from "../../modules/follow";
+import { postLikeRoutes } from "../../modules/post-like";
 
 const router = express.Router();
 
@@ -19,5 +20,6 @@ router.use("/uploads", uploadRoutes);
 router.use("/news", newsRoutes);
 router.use("/feed", feedRoutes);
 router.use("/posts", postRoutes);
+router.use("/posts", postLikeRoutes);
 
 export default router;

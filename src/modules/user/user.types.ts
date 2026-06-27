@@ -1,4 +1,4 @@
-import { updateUserSchema } from "./user.schema"
+import type { updateUserSchema } from "./user.schema"
 import { z } from "zod";
 
 const USER_ROLE = {

@@ -4,8 +4,10 @@ import { StatusCodes } from "http-status-codes";
 import { ApiError } from "../utils";
 import { envConfig, logger } from "../config";
 import { TJwtPayloadToken } from "../modules/user/user.types";
+import { UserModel } from "../modules/user";
+import mongoose from "mongoose";
 
-const authenticate = (req: Request, res: Response, next: NextFunction) => {
+const authenticate = async (req: Request, res: Response, next: NextFunction) => {
     try {
         logger.info("Authenticating user...");
         const authorizationHeader = req.headers.authorization;
@@ -21,9 +23,23 @@ const authenticate = (req: Request, res: Response, next: NextFunction) => {
         }
 
         const decoded = jwt.verify(token, envConfig.jwtAccessTokenSecret) as TJwtPayloadToken;
+        console.log("Decoded JWT payload:", decoded); // Log the decoded payload for debugging
 
         if (!decoded?.phone || !decoded?.role) {
             throw new ApiError(StatusCodes.UNAUTHORIZED, "Invalid access token");
+        }
+
+        const userId = decoded.id;
+        if (!userId) {
+            throw new ApiError(StatusCodes.UNAUTHORIZED, "User ID is missing in the token");
+        }
+        if(mongoose.Types.ObjectId.isValid(userId) === false) {
+            throw new ApiError(StatusCodes.UNAUTHORIZED, "Invalid user ID in the token");
+        }
+
+        const isUserValid = await UserModel.findById(userId, { _id: 1 }).lean();
+        if (!isUserValid) {
+            throw new ApiError(StatusCodes.UNAUTHORIZED, "User does not exist");
         }
 
         req.user = {

@@ -1,7 +1,6 @@
 import z from "zod";
 import { GENDER } from "./user.types";
 import mongoose from "mongoose";
-import { UserModel } from "./user.model";
 
 const usernameSchema = z.string().trim().toLowerCase().min(3, "Username must be at least 3 characters").max(20, "Username cannot exceed 20 characters")
     .refine(
