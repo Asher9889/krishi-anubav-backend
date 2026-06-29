@@ -17,6 +17,7 @@ const feedPostSchema = z.object({
   likesCount: z.number(),
   commentsCount: z.number(),
   isActive: z.boolean(),
+  isLiked: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });

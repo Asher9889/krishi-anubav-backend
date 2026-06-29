@@ -11,6 +11,7 @@ router.patch("/me",  authenticate,
     // paramsValidate(updateUserParamsSchema),
      schemaValidate(updateUserParamsSchema),
       userController.updateMe);
+
      
 
 export default router;

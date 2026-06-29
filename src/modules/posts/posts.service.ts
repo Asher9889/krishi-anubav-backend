@@ -87,8 +87,7 @@ class PostsService {
     getPosts = async ({ userId, query }: { userId: string, query: TGetPostsPayload }) => {
         try {
             const {limit = 20, page=1} = query;
-            // const limit = pagination?.limit || 10;
-            // const page = pagination?.page || 1;
+
             const skip = (page - 1) * limit;
             const id = new mongoose.Types.ObjectId(userId);
             console.log("Fetching posts for userId:", userId, "with pagination:", { page, limit });

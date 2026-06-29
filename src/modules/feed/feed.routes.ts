@@ -6,6 +6,6 @@ import { feedQuerySchema } from "./feed.schema";
 
 const router = express.Router();
 
-router.get("/", queryValidate(feedQuerySchema), feedController.getFeed);
+router.get("/", authenticate, queryValidate(feedQuerySchema), feedController.getFeed);
 
 export default router;
