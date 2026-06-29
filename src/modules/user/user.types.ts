@@ -84,4 +84,21 @@ type TGender = typeof GENDER[keyof typeof GENDER];
 
 type TUpdateUserRequest = z.infer<typeof updateUserSchema>;
 
-export { USER_ROLE, LANGUAGES, OCCUPATIONS, USER_STATUS, GENDER, type TJwtPayloadToken, type TUserRole, type TLanguage, type TOccupation, type TUserStatus, type TGender, type TUpdateUserRequest, type TUpdateUserParams, type TUserProfileResponse }
+type TUserPublicProfileResponse = {
+    id: string;
+    fullName: string;
+    name: string | null;
+    username: string;
+    bio: string;
+    occupation: string | null;
+    avatar: string | null;
+    state: string | null;
+    city: string | null;
+    district: string | null;
+    village: string | null;
+    postsCount: number;
+    followersCount: number;
+    followingCount: number;
+}
+
+export { USER_ROLE, LANGUAGES, OCCUPATIONS, USER_STATUS, GENDER, type TJwtPayloadToken, type TUserRole, type TLanguage, type TOccupation, type TUserStatus, type TGender, type TUpdateUserRequest, type TUpdateUserParams, type TUserProfileResponse, type TUserPublicProfileResponse }

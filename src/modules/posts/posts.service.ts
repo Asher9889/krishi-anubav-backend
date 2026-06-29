@@ -14,10 +14,16 @@ class PostsService {
 
         const { userId, postData, images } = post;
         try {
-            const user = UserModel.findById(userId).lean();
+            const user = await UserModel.findById(userId).lean();
+
             if (!user) {
                 throw new ApiError(StatusCodes.NOT_FOUND, "User not found. Cannot create post.");
             }
+
+            if (!user.isProfileCompleted) {
+                throw new ApiError(StatusCodes.BAD_REQUEST, "User profile is not completed. Cannot create post.");
+            }
+
             const { url, method } = apiEndPoints.AI.createPost
 
             const aiPayload = {
@@ -86,11 +92,12 @@ class PostsService {
 
     getPosts = async ({ userId, query }: { userId: string, query: TGetPostsPayload }) => {
         try {
-            const {limit = 20, page=1} = query;
+            const {limit = 20, page=1, userId: targetUserId} = query;
+            const filterUserId = targetUserId || userId;
 
             const skip = (page - 1) * limit;
-            const id = new mongoose.Types.ObjectId(userId);
-            console.log("Fetching posts for userId:", userId, "with pagination:", { page, limit });
+            const id = new mongoose.Types.ObjectId(filterUserId);
+            console.log("Fetching posts for userId:", filterUserId, "with pagination:", { page, limit });
 
             const posts = await PostModel.find({ userId: id, isActive: true }).sort({ createdAt: -1 }).limit(limit).skip(skip).lean();
             const formattedPosts = posts.map(({ _id, userId, ...post }, index) => {

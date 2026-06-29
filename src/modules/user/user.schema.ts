@@ -61,4 +61,8 @@ const updateUserSchema = z.object({
     isProfileCompleted: z.boolean().default(false),
 });
 
-export { checkUsernameSchema, updateUserParamsSchema, updateUserSchema };
+const getUserParamsSchema = z.object({
+    userId: IdScheme,
+});
+
+export { checkUsernameSchema, updateUserParamsSchema, updateUserSchema, getUserParamsSchema };
