@@ -1,4 +1,4 @@
-import type { updateUserSchema } from "./user.schema"
+import type { getUserParamsSchema, updateUserSchema } from "./user.schema"
 import { z } from "zod";
 
 const USER_ROLE = {
@@ -83,6 +83,7 @@ type TUserStatus = typeof USER_STATUS[keyof typeof USER_STATUS];
 type TGender = typeof GENDER[keyof typeof GENDER];
 
 type TUpdateUserRequest = z.infer<typeof updateUserSchema>;
+type TUserId = z.infer<typeof getUserParamsSchema>;
 
 type TUserPublicProfileResponse = {
     id: string;
@@ -99,6 +100,7 @@ type TUserPublicProfileResponse = {
     postsCount: number;
     followersCount: number;
     followingCount: number;
+    isFollowing: boolean;
 }
 
-export { USER_ROLE, LANGUAGES, OCCUPATIONS, USER_STATUS, GENDER, type TJwtPayloadToken, type TUserRole, type TLanguage, type TOccupation, type TUserStatus, type TGender, type TUpdateUserRequest, type TUpdateUserParams, type TUserProfileResponse, type TUserPublicProfileResponse }
+export { USER_ROLE, LANGUAGES, OCCUPATIONS, USER_STATUS, GENDER, type TJwtPayloadToken, type TUserRole, type TLanguage, type TOccupation, type TUserStatus, type TGender, type TUpdateUserRequest, type TUpdateUserParams, type TUserProfileResponse, type TUserPublicProfileResponse, type TUserId }

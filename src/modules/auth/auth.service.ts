@@ -77,6 +77,7 @@ class AuthService {
             }
 
             const Retureduser =  {
+                ...user,
                 id: user._id.toString(),
                 fullName: user.fullName ?? null,
                 username: user.username ?? null,
@@ -93,6 +94,7 @@ class AuthService {
                 state: user.address?.state ?? null,
                 createdAt: user.createdAt,
             };
+
             return Retureduser;
         } catch (error: any) {
             if (error instanceof ApiError) {

@@ -2,6 +2,8 @@ import { StatusCodes } from "http-status-codes";
 import { ApiError } from "../../utils";
 import { IUser, UserModel } from "./user.model";
 import { TUpdateUserRequest, TUserProfileResponse, TUserPublicProfileResponse } from "./user.types";
+import FollowModel from "../follow/follow.model";
+import { logger } from "../../config";
 
 class UserService {
     checkUsernameAvailability = async (username: string): Promise<{ available: boolean }> => {
@@ -21,12 +23,19 @@ class UserService {
         }
     }
 
-    getUserProfile = async (userId: string): Promise<TUserPublicProfileResponse> => {
+    getUserProfile = async (loggedInUserId: string, userId: string): Promise<TUserPublicProfileResponse> => {
         try {
             const user = await UserModel.findById(userId).lean();
             if (!user) {
                 throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
             }
+
+            const isFollowing = await FollowModel.exists({
+                followerId: loggedInUserId,
+                followingId: userId,
+            }).lean();
+
+            logger.info(`Fetched user profile for user ID: ${userId}. Is following: ${!!isFollowing}`);
 
             return {
                 id: user._id.toString(),
@@ -43,6 +52,7 @@ class UserService {
                 postsCount: user.postsCount || 0,
                 followersCount: user.followersCount || 0,
                 followingCount: user.followingCount || 0,
+                isFollowing: !!isFollowing, // This should be determined based on the authenticated user's following list
             };
         } catch (error) {
             if (error instanceof ApiError) {
@@ -62,7 +72,7 @@ class UserService {
             const updates = this.flattenObject(field);
             updates.isProfileCompleted = this.checkProfileCompletion({ ...user.toObject(), ...updates });
             await UserModel.findByIdAndUpdate(id, { $set: updates }, { new: false }).lean();
-            return {...field, isProfileCompleted: updates.isProfileCompleted};
+            return { ...field, isProfileCompleted: updates.isProfileCompleted };
 
         } catch (error) {
             if (error instanceof ApiError) {

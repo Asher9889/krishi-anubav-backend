@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { ApiResponse } from "../../utils";
+import { ApiError, ApiResponse } from "../../utils";
 import UserService from "./user.service";
-import { TUpdateUserRequest } from "./user.types";
+import { TUpdateUserRequest, TUserId } from "./user.types";
 import { logger } from "../../config";
 
 class UserController {
@@ -14,8 +14,13 @@ class UserController {
 
     getUserProfile = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { userId } = req.validatedParams as { userId: string };
-            const user = await this.userService.getUserProfile(userId);
+            const { userId } = req.validatedParams as TUserId;
+            const loggedInUserId = req.user?.id; // Assuming you have a middleware that sets req.user for authenticated users
+            logger.info(`Received request to fetch user profile for user ID: ${userId} by logged-in user ID: ${loggedInUserId}`);
+            if (!loggedInUserId) {
+                throw new ApiError(StatusCodes.UNAUTHORIZED, "User not authenticated");
+            }
+            const user = await this.userService.getUserProfile(loggedInUserId, userId);
             return ApiResponse.success(res, StatusCodes.OK, "User fetched successfully", { user });
         } catch (error) {
             return next(error);
@@ -37,7 +42,7 @@ class UserController {
     updateMe = async (req: Request, res: Response, next: NextFunction) => {
         logger.info(`Received request to update user profile for user ID: ${req.user?.id} with data: ${JSON.stringify(req.body)}`);
         try {
-            const id = req.user?.id as string; 
+            const id = req.user?.id as string;
             const result = await this.userService.updateMe(id, req.body as TUpdateUserRequest);
 
             return ApiResponse.success(res, StatusCodes.OK, "User updated successfully", result);

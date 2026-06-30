@@ -16,6 +16,9 @@ interface IKnowledgePost extends mongoose.Document {
   commentsCount: number;
 
   isActive: boolean;
+
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const knowledgePostSchema = new Schema<IKnowledgePost>(

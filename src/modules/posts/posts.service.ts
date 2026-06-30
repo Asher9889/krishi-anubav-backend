@@ -114,5 +114,39 @@ class PostsService {
             throw error;
         }
     }
+    getFeaturedPosts = async () => {
+        try {
+            // const id = new mongoose.Types.ObjectId(userId);
+            const posts = await PostModel.findOne({ isActive: true }).sort({ createdAt: -1 }).limit(1).lean();
+            if (!posts) {
+                throw new ApiError(StatusCodes.NOT_FOUND, "No featured posts found.");
+            }
+            const postedBy = await UserModel.findOne({ _id: posts.userId }, { fullName: 1, avatar: 1 }).lean();
+
+            if(!postedBy){
+                throw new ApiError(StatusCodes.NOT_FOUND, "User not found for the featured post.");
+            }
+
+            const formattedPosts = {
+                post: {
+                    knowledge: posts.knowledge,
+                    images: posts.images,
+                    totalLikes: posts.likesCount,
+                    totalComments: posts.commentsCount,
+                    postedAt: posts.createdAt,
+                },
+                postedBy: {
+                    id: posts.userId.toString(),
+                    name: postedBy.fullName,
+                    avatar: postedBy.avatar,
+                },
+            }
+          
+
+            return formattedPosts;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 export default PostsService;

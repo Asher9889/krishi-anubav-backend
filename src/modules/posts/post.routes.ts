@@ -9,5 +9,6 @@ const router = express.Router();
 
 router.post("/", authenticate, multerUpload.array("images", 5), postsController.createPost);
 router.get("/",  authenticate, queryValidate(getPostsSchema),   postsController.getPosts);  
+router.get("/feature",  postsController.getFeaturedPosts);
 
 export default router;

@@ -49,6 +49,20 @@ class PostsController {
             return next(error);
         }
     }
+
+    getFeaturedPosts = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+        try {
+            // const userId = req.user?.id; // Assuming user ID is available in the request object after authentication
+
+            // if (!userId) {
+            //     throw new ApiError(StatusCodes.UNAUTHORIZED, "User not authenticated");
+            // }
+            const posts = await this.postsService.getFeaturedPosts();
+            return ApiResponse.success(res, StatusCodes.OK, "Featured posts retrieved successfully", posts); // Placeholder response
+        } catch (error) {
+            return next(error);
+        }
+    }
 }
 
 export default PostsController;
