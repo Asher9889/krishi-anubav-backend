@@ -28,6 +28,9 @@ const envConfig:IEnvConfig = {
     minioAccessKey: process.env.MINIO_ACCESS_KEY!,
     minioSecretKey: process.env.MINIO_SECRET_KEY!,
     bucketName: process.env.MINIO_BUCKET_NAME!,
+
+    // translation
+    translationApiBaseUrl: process.env.TRANSLATION_API_BASE_URL!,
 }
 
 export default envConfig;

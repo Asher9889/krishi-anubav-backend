@@ -19,6 +19,13 @@ const aiApi = axios.create({
     }
 })
 
-export {  aiApi };
+const translationApi = axios.create({
+    baseURL: envConfig.translationApiBaseUrl,
+    headers: {
+        "Content-Type": "application/json",
+    }
+})
+
+export {  aiApi, translationApi };
 
 export default otpApi;

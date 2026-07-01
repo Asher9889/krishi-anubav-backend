@@ -24,6 +24,9 @@ interface IEnvConfig {
     //Ai
     aiApiBaseUrl: string;
 
+    // translation
+    translationApiBaseUrl: string;
+
 }
 
 

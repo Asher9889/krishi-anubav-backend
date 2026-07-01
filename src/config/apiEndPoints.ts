@@ -17,6 +17,13 @@ const apiEndPoints = {
             url: "/quick-upload",
             method: "POST",
         },
+    },
+
+    translation: {
+        translate: {
+            url: "/translate",
+            method: "POST",
+        },
     }
 };
 
