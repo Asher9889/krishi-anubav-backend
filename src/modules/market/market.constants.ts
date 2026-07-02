@@ -1,0 +1,21 @@
+
+export const COMMODITY_GROUP = {
+    CEREALS: 1,
+    PULSES: 2,
+    OIL_SEEDS: 3,
+    FIBRE_CROPS: 4,
+    FRUITS: 5,
+    VEGETABLES: 6,
+    SPICES: 7,
+    DRY_FRUITS: 8,
+    BEVERAGES: 9,
+    OTHERS: 10,
+    DRUG_AND_NARCOTICS: 11,
+    FOREST_PRODUCTS: 12,
+    LIVESTOCK_POULTRY_FISHERIES: 13,
+    FLOWERS: 14,
+    OILS_AND_FATS: 15,
+    MEDICINAL_AND_AROMATIC_PLANTS: 16,
+} as const;
+
+export type TMarketCommodityGroup = (typeof COMMODITY_GROUP)[keyof typeof COMMODITY_GROUP];
