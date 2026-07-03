@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { TLanguages } from "./translation.types";
 import { Languages } from "./translation.constant";
 
 

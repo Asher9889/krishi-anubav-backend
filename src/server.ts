@@ -5,6 +5,7 @@ import { globalErrorHandler, routeNotExistsHandler } from "./utils";
 import { connectMongoDB } from "./db";
 import compression from "compression";
 import PinoHttp from "pino-http";
+import "./modules/market/market.module";
 
 connectMongoDB();
 
@@ -14,6 +15,7 @@ app.use(PinoHttp());
 
 
 app.use(compression());
+
 
 
 app.get("/", (req, res) => {

@@ -1,21 +1,24 @@
 import mongoose from "mongoose";
-import { TMarketCommodityGroup } from "./market.constants";
 
 interface Commodity extends mongoose.Document {
 
     agmarkCommodityId: number,
     agmarkGroupId: number,
 
-    name: string,
-    hindiName: string,
+    agmarkCommodityName: string,
+    translations: {
+        en: string,
+        hi: string,
+    },
 
     imageUrl: string,
 
     category: string,
 
-    searchable: true,
+    searchable: boolean,
 
-    syncEnabled: true,
+    syncEnabled: boolean,
+    isFeatured: boolean,
 
 }
 
@@ -23,8 +26,11 @@ const commoditySchema = new mongoose.Schema<Commodity>({
     agmarkCommodityId: { type: Number, required: true, unique: true },
     agmarkGroupId: { type: Number, required: true },
 
-    name: { type: String, required: true },
-    hindiName: { type: String, required: true },
+    agmarkCommodityName: { type: String, required: true },
+    translations: {
+        en: { type: String, required: true, trim: true },
+        hi: { type: String, required: true, trim: true }
+    },
 
     imageUrl: { type: String, required: true },
 
@@ -33,6 +39,8 @@ const commoditySchema = new mongoose.Schema<Commodity>({
     searchable: { type: Boolean, default: true },
 
     syncEnabled: { type: Boolean, default: true },
+
+    isFeatured: { type: Boolean, default: false },
   
 });
 

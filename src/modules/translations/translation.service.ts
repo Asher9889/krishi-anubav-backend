@@ -4,6 +4,7 @@ import { logger } from "../../config";
 import LibreTranslationService from "./libreTranslateService";
 import TranslationModel from "./translation.model";
 import { TranslateResult, BatchTranslateResult, TLanguages } from "./translation.types";
+import { languageRegex } from "../../shared";
 
 class TranslationService {
     private libreTranslateService: LibreTranslationService;
@@ -21,13 +22,18 @@ class TranslationService {
             if (existing) {
                 const cached = existing.translations.get(targetLanguage);
                 if (cached) {
-                    logger.info(`Translation cache hit for "${text}" -> ${targetLanguage}`);
-                    return { translatedText: cached.text };
+                    logger.info(`Translation DB hit for "${text}" -> ${targetLanguage}`);
+                    return { translatedText: cached.text};
                 }
             }
 
             const result = await this.libreTranslateService.translate(text, "auto", targetLanguage);
-            const translatedText = result.translatedText;
+            const isHindi = languageRegex.containsHindi(result.translatedText);
+            const alternatives = result.alternatives[0];
+
+            console.log(`Translation result for "${text}" -> ${targetLanguage}: ${result.translatedText}, isHindi: ${isHindi}, alternatives: ${alternatives}`);
+
+            const translatedText = isHindi ? result.translatedText : alternatives ?? "";
 
             if (existing) {
                 existing.translations.set(targetLanguage, {

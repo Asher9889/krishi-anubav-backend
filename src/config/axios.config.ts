@@ -26,6 +26,13 @@ const translationApi = axios.create({
     }
 })
 
-export {  aiApi, translationApi };
+const agmarkApi = axios.create({
+    baseURL: "https://api.agmarknet.gov.in/v1",
+    headers: {
+        "Content-Type": "application/json",
+    }
+})
+
+export {  aiApi, translationApi, agmarkApi };
 
 export default otpApi;
