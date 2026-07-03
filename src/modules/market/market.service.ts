@@ -41,13 +41,13 @@ class MarketService {
       }
       const filter:any = {
         arrivalDate: { $gte: fromDate, $lte: toDate },
-        districtName: { $regex: districtName, $options: "i" },
+        districtName: { $regex: cityName, $options: "i" },
         //  districtName: /kanpur/i
         // { districtName: { $regex: new RegExp(`^${cityName}$`, "i") } },
       }
-      if(cityName){
-        filter["cityName"] = { $regex: cityName, $options: "i" };
-      }
+      // if(cityName){ 
+      //   filter["cityName"] = { $regex: cityName, $options: "i" };
+      // }
 
       console.log(`Fetching featured commodities with filter: ${JSON.stringify(filter)}`);
 
