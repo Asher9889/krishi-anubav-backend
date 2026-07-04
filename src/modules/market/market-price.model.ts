@@ -25,6 +25,14 @@ interface IMarketPrice extends mongoose.Document {
   // AGMARK arrival date
   arrivalDate: string,
 
+  districtNameHi: string | null;
+  marketNameHi: string | null;
+  stateNameHi: string | null;
+  gradeNameHi: string | null;
+  varietyNameHi: string | null;
+  commodityGroupNameHi: string | null;
+  commodityNameHi: string | null;
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -48,6 +56,15 @@ const marketPriceSchema = new mongoose.Schema<IMarketPrice>({
   priceUnit: { type: String, required: true },
 
   arrivalDate: { type: String, required: true },
+
+  districtNameHi: { type: String, default: null },
+  marketNameHi: { type: String, default: null },
+  stateNameHi: { type: String, default: null },
+  gradeNameHi: { type: String, default: null },
+  varietyNameHi: { type: String, default: null },
+  commodityGroupNameHi: { type: String, default: null },
+  commodityNameHi: { type: String, default: null },
+  
 }, { timestamps: true, versionKey: false });
 
 const MarketPriceModel = mongoose.model<IMarketPrice>("MarketPrice", marketPriceSchema, "market_prices");

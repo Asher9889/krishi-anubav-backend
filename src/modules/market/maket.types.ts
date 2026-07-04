@@ -70,6 +70,14 @@ export interface ICropPriceData {
     modalPrice: string;
     priceUnit: string;
     arrivalDate: string;
+
+    districtNameHi: string;
+    marketNameHi: string;
+    stateNameHi: string;
+    gradeNameHi: string;
+    varietyNameHi: string;
+    commodityGroupNameHi: string;
+    commodityNameHi: string;
 }
 
 export type THomeScreenFeaturedCommoditiesBody = z.infer<typeof featuredCommoditiesSchema>; 

@@ -36,10 +36,10 @@ class MarketService {
     logger.info(`Location Data is: ${JSON.stringify(locationData)}`);
     try {
 
-      if(!districtName || districtName.trim() === "") {
+      if (!districtName || districtName.trim() === "") {
         throw new ApiError(StatusCodes.BAD_GATEWAY, "District name is required");
       }
-      const filter:any = {
+      const filter: any = {
         arrivalDate: { $gte: fromDate, $lte: toDate },
         districtName: { $regex: cityName, $options: "i" },
         //  districtName: /kanpur/i
@@ -273,6 +273,7 @@ class MarketService {
           (result) => result.status === "rejected"
         );
 
+
         const commodityPrices = fulfilled.flatMap((result) => result.value);
 
         logger.info(
@@ -283,6 +284,37 @@ class MarketService {
           logger.warn("No commodity prices found in this batch.");
           continue;
         }
+
+        // Translate commodity prices
+        await Promise.all(
+          commodityPrices.map(async (item) => {
+            const [
+              districtNameHi,
+              marketNameHi,
+              stateNameHi,
+              gradeNameHi,
+              varietyNameHi,
+              commodityGroupNameHi,
+              commodityNameHi,
+            ] = await Promise.all([
+              this.translationService.translate(item.districtName, "hi"),
+              this.translationService.translate(item.marketName, "hi"),
+              this.translationService.translate(item.stateName, "hi"),
+              this.translationService.translate(item.gradeName, "hi"),
+              this.translationService.translate(item.varietyName, "hi"),
+              this.translationService.translate(item.commodityGroupName, "hi"),
+              this.translationService.translate(item.commodityName, "hi"),
+            ]);
+
+            item.districtNameHi = districtNameHi.translatedText;
+            item.marketNameHi = marketNameHi.translatedText;
+            item.stateNameHi = stateNameHi.translatedText;
+            item.gradeNameHi = gradeNameHi.translatedText;
+            item.varietyNameHi = varietyNameHi.translatedText;
+            item.commodityGroupNameHi = commodityGroupNameHi.translatedText;
+            item.commodityNameHi = commodityNameHi.translatedText;
+          })
+        );
 
         const operations = commodityPrices.flatMap((item) => {
           const commodityId = this.commodityMap.get(item.commodityName.toLowerCase())?.id;
