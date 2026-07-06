@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { ApiResponse } from "../../utils";
+import { ApiError, ApiResponse } from "../../utils";
 import { THomeScreenFeaturedCommoditiesBody } from "./maket.types";
 import MarketService from "./market.service";
 import CommodityService from "./market.service";
@@ -23,9 +23,20 @@ class MarketController {
         }
     };
 
+    getCommodities = async (req: any, res: any) => {
+        try {
+            logger.info(`Fetching all commodities`);
+            const language = req.headers["accept-language"] ?? "en";
+            const commodities = await this.marketService.getAllCommodities({ language });
+            return ApiResponse.success(res, StatusCodes.OK, "Commodities fetched successfully", commodities);
+        } catch (error) {
+            throw error;
+        }
+    }
+
     // Controller methods will be defined here
 
-    
-} 
+
+}
 
 export default MarketController;

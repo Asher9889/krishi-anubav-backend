@@ -29,6 +29,29 @@ class MarketService {
     this.translationService = translationService;
   }
 
+  getAllCommodities = async (options: { language: string }) => {
+    try {
+      logger.info("Fetching all commodities from the database...");
+      const { language } = options;
+
+      if (language !== "en" && language !== "hi") {
+        throw new ApiError(StatusCodes.BAD_REQUEST,
+          "Invalid language parameter. Supported values are 'en' and 'hi'.");
+      }
+
+      const commodities = await CommodityModel.find({},
+        { _id: 1, agmarkCommodityName: 1, translations: 1, agmarkCommodityId: 1, agmarkGroupId: 1 }).lean();
+      logger.info(`Fetched ${commodities.length} commodities from the database.`);
+      return commodities.map(({ _id, translations, ...rest }) => ({
+        id: _id.toString(),
+        name: translations?.[language as "en" | "hi"] || rest.agmarkCommodityName,
+        ...rest,
+      }));
+    } catch (error: any) {
+      logger.error(`Failed to fetch all commodities. Error: ${error.message}`);
+      throw error;
+    }
+  }
 
   getHomeScreenFeaturedCommodities = async (locationData: THomeScreenFeaturedCommoditiesBody) => {
     const { districtName, cityName, fromDate, toDate } = locationData;

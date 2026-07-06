@@ -6,6 +6,7 @@ const router = express.Router();
 
 
 router.get("/feature", queryValidate(featuredCommoditiesSchema), marketController.getHomeScreenFeaturedCommodities)
+router.get("/commodities", marketController.getCommodities)
 
 
 export default router;
