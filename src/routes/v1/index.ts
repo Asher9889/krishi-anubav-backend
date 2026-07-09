@@ -10,6 +10,7 @@ import { followRoutes } from "../../modules/follow";
 import { postLikeRoutes } from "../../modules/post-like";
 import { translationRoutes } from "../../modules/translations";
 import { marketRoutes } from "../../modules/market";
+import { voiceRoutes } from "../../modules/voice";
 
 const router = express.Router();
 
@@ -25,5 +26,7 @@ router.use("/posts", postRoutes);
 router.use("/posts", postLikeRoutes);
 router.use("/translations", translationRoutes);
 router.use("/market", marketRoutes);
+
+router.use("/voice", voiceRoutes);
 
 export default router;

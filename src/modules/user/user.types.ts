@@ -74,6 +74,7 @@ type TJwtPayloadToken = {
     id: string;
     phone: string;
     role?: string;
+    fullName?: string;
 }
 
 type TUserRole = typeof USER_ROLE[keyof typeof USER_ROLE];

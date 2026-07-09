@@ -37,9 +37,9 @@ const authenticate = async (req: Request, res: Response, next: NextFunction) => 
             throw new ApiError(StatusCodes.UNAUTHORIZED, "Invalid user ID in the token");
         }
 
-        const isUserValid = await UserModel.findById(userId, { _id: 1 }).lean();
+        const isUserValid = await UserModel.findById(userId, { _id: 1, fullName: 1 }).lean();
         if (!isUserValid) {
-            throw new ApiError(StatusCodes.UNAUTHORIZED, "User does not exist");
+            throw new ApiError(StatusCodes.UNAUTHORIZED, "User or password incorrect.");
         }
 
         req.user = {

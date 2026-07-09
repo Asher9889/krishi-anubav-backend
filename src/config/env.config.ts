@@ -31,6 +31,11 @@ const envConfig:IEnvConfig = {
 
     // translation
     translationApiBaseUrl: process.env.TRANSLATION_API_BASE_URL!,
+
+    // livekit
+    livekitUrl: process.env.LIVEKIT_URL!,
+    livekitApiKey: process.env.LIVEKIT_API_KEY!,
+    livekitApiSecret: process.env.LIVEKIT_API_SECRET!,
 }
 
 export default envConfig;

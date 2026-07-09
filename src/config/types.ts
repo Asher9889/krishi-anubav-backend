@@ -27,6 +27,11 @@ interface IEnvConfig {
     // translation
     translationApiBaseUrl: string;
 
+    // livekit
+    livekitUrl: string;
+    livekitApiKey: string;
+    livekitApiSecret: string;
+
 }
 
 
