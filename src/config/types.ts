@@ -32,6 +32,15 @@ interface IEnvConfig {
     livekitApiKey: string;
     livekitApiSecret: string;
 
+    // custom stt server
+    sttBaseUrl: string;
+
+    // custom tts server
+    ttsBaseUrl: string;
+
+    // agri agent name
+    agriAgentName: string;
+
 }
 
 

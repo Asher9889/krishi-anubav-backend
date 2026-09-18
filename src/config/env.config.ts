@@ -36,6 +36,15 @@ const envConfig:IEnvConfig = {
     livekitUrl: process.env.LIVEKIT_URL!,
     livekitApiKey: process.env.LIVEKIT_API_KEY!,
     livekitApiSecret: process.env.LIVEKIT_API_SECRET!,
+
+    // custom stt server
+    sttBaseUrl: process.env.STT_BASE_URL!,
+
+    // custom tts server
+    ttsBaseUrl: process.env.TTS_BASE_URL!,
+
+    // agri agent name
+    agriAgentName: process.env.AGRI_AGENT_NAME!,
 }
 
 export default envConfig;

@@ -32,8 +32,8 @@ class LivekitService {
             maxParticipants: 2,
         });
         logger.info(`Room created successfully: ${user.roomName}`);
-        const dispatch = await this.agentDispatchClient.createDispatch(user.roomName, "agri-ai-agent");
-        logger.info(`Agent ${"agri-ai-agent"} Dispatch created successfully for room: ${user.roomName}, ${dispatch}`);
+        const dispatch = await this.agentDispatchClient.createDispatch(user.roomName, envConfig.agriAgentName);
+        logger.info(`Agent ${envConfig.agriAgentName} Dispatch created successfully for room: ${user.roomName}, ${dispatch}`);
         const token = await this.generateToken({
             userId: user.userId,
             name: user.name,

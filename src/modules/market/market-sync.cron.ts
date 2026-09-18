@@ -23,7 +23,7 @@ class MarketSyncCron {
   };
 
   loadAllAgmarkCommodityPrices = () => {
-    cron.schedule("26 19 * * *", async () => {
+    cron.schedule("0 */6 * * *", async () => {
       try {
         logger.info("Starting Agmark commodity price sync...");
         await this.marketService.getAllAgmarkCommodityPrices();
