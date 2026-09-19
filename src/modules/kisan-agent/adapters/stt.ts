@@ -1,4 +1,4 @@
-import { createTimedString, log, mergeFrames, normalizeLanguage, stt, type APIConnectOptions, type AudioBuffer } from '@livekit/agents';
+import { createTimedString, mergeFrames, normalizeLanguage, stt, type APIConnectOptions, type AudioBuffer } from '@livekit/agents';
 import { calculateAudioDurationSeconds } from '@livekit/agents';
 import { randomUUID } from 'node:crypto';
 import envConfig from '../../../config/env.config';
@@ -49,7 +49,6 @@ interface WhisperResult {
  */
 export class STT extends stt.STT {
     private opts: CustomSTTOptions;
-    private logger = log();
     private sampleRateReported = false;
     label = 'custom.STT';
 
@@ -75,17 +74,19 @@ export class STT extends stt.STT {
     }
 
     async _recognize(buffer: AudioBuffer, abortSignal?: AbortSignal): Promise<stt.SpeechEvent> {
+        const tStart = performance.now();
         const frame = mergeFrames(buffer);
         const { data: pcm, sampleRate } = downmixToMono(frame);
         const requestId = randomUUID();
+        const audioSec = calculateAudioDurationSeconds(frame);
+
+        console.log('[stt.start]', { requestId, audioSec: audioSec.toFixed(3), sampleRate, bytes: pcm.byteLength }, 'custom STT: recognize started');
 
         // Frames arrive at the silero VAD sample rate (16 kHz mono s16le). The
         // header announces the real rate so the server resamples to 16 kHz itself.
         if (!this.sampleRateReported) {
             this.sampleRateReported = true;
-            this.logger
-                .child({ sampleRate, channels: frame.channels, frames: pcm.byteLength / 2 })
-                .debug('custom STT: utterance format');
+            console.debug('[stt.format]', { sampleRate, channels: frame.channels, frames: pcm.byteLength / 2 }, 'custom STT: utterance format');
         }
 
         const baseUrl = this.opts.baseUrl.replace(/\/+$/, '');
@@ -117,7 +118,7 @@ export class STT extends stt.STT {
         });
 
         if (!resp.ok) {
-            this.logger.child({ status: resp.status }).error('custom STT request failed');
+            console.error('[stt.error]', { status: resp.status, requestId }, 'custom STT request failed');
             throw new Error(
                 `custom STT request failed with status ${resp.status}: ${await resp.text()}`,
             );
@@ -131,9 +132,7 @@ export class STT extends stt.STT {
         }
 
         if (!result.success) {
-            this.logger
-                .child({ requestId, message: result.message })
-                .error('custom STT reported a failed transcription');
+            console.error('[stt.error]', { requestId, message: result.message }, 'custom STT reported a failed transcription');
             throw new Error(`custom STT failed: ${result.message ?? 'unknown error'}`);
         }
 
@@ -166,6 +165,9 @@ export class STT extends stt.STT {
                 : {}),
         };
 
+        const durationMs = performance.now() - tStart;
+        console.log('[stt.done]', { requestId, durationMs: Math.round(durationMs), audioSec: audioSec.toFixed(3), text, confidence }, 'custom STT: recognize completed');
+
         return {
             type: stt.SpeechEventType.FINAL_TRANSCRIPT,
             requestId,
@@ -185,7 +187,6 @@ export class STT extends stt.STT {
  */
 export class SpeechStream extends stt.SpeechStream {
     #stt: STT;
-    #logger = log();
     label = 'custom.SpeechStream';
 
     constructor(stt: STT, connOptions?: APIConnectOptions) {
@@ -229,7 +230,7 @@ export class SpeechStream extends stt.SpeechStream {
             this.queue.put(event);
             this.queue.put({ type: stt.SpeechEventType.END_OF_SPEECH });
         } catch (error) {
-            this.#logger.child({ error }).error('custom STT recognize failed');
+            console.error('[stt.error]', { error }, 'custom STT recognize failed');
         }
     }
 }

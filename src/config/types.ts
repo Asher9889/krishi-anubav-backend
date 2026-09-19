@@ -38,6 +38,11 @@ interface IEnvConfig {
     // custom tts server
     ttsBaseUrl: string;
 
+    // custom ollama llm server
+    ollamaBaseUrl: string;
+    ollamaApiKey: string;
+    ollamaModel: string;
+
     // agri agent name
     agriAgentName: string;
 

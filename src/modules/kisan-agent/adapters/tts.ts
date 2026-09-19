@@ -4,7 +4,6 @@ import {
     APITimeoutError,
     AudioByteStream,
     type APIConnectOptions,
-    log,
     tts,
 } from '@livekit/agents';
 import { randomUUID } from 'node:crypto';
@@ -38,7 +37,6 @@ export interface CustomTTSOptions {
  */
 export class TTS extends tts.TTS {
     private opts: CustomTTSOptions;
-    private logger = log();
     label = 'custom.TTS';
 
     get provider(): string {
@@ -87,11 +85,14 @@ export class TTS extends tts.TTS {
         onAudio: (value: tts.SynthesizedAudio) => void,
         abortSignal?: AbortSignal,
     ): Promise<void> {
+        const tStart = performance.now();
         const trimmed = text.trim();
         if (!trimmed) {
-            this.logger.child({ requestId }).warn('custom TTS: empty text, skipping');
+            console.warn('[tts.skip]', { requestId }, 'custom TTS: empty text, skipping');
             return;
         }
+
+        console.log('[tts.start]', { requestId, textLen: trimmed.length, language: this.opts.language }, 'custom TTS: synthesize started');
 
         const sampleRate = this.sampleRate;
         const numChannels = this.numChannels;
@@ -139,7 +140,7 @@ export class TTS extends tts.TTS {
 
         if (!resp.ok) {
             const bodyText = await resp.text();
-            this.logger.child({ status: resp.status, requestId }).error('custom TTS request failed');
+            console.error('[tts.error]', { status: resp.status, requestId }, 'custom TTS request failed');
             throw new APIStatusError({
                 message: `custom TTS request failed with status ${resp.status}: ${bodyText}`,
                 options: {
@@ -196,7 +197,11 @@ export class TTS extends tts.TTS {
                 onAudio(pending);
             }
             if (emitted === 0) {
-                this.logger.child({ requestId }).warn('custom TTS returned no audio');
+                console.warn('[tts.done]', { requestId, durationMs: Math.round(performance.now() - tStart), emitted }, 'custom TTS returned no audio');
+            } else {
+                const durationMs = performance.now() - tStart;
+                const audioSec = (emitted * (outSampleRate / 10) / outSampleRate).toFixed(3);
+                console.log('[tts.done]', { requestId, durationMs: Math.round(durationMs), emitted, audioSec, textLen: trimmed.length }, 'custom TTS: synthesize completed');
             }
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') {
@@ -218,7 +223,6 @@ export class TTS extends tts.TTS {
  */
 export class ChunkedStream extends tts.ChunkedStream {
     #tts: TTS;
-    #logger = log();
     label = 'custom.TTS.ChunkedStream';
 
     constructor(
@@ -245,7 +249,7 @@ export class ChunkedStream extends tts.ChunkedStream {
                 this.abortSignal,
             );
         } catch (error) {
-            this.#logger.child({ requestId, error }).error('custom TTS synthesize failed');
+            console.error('[tts.error]', { requestId, error }, 'custom TTS synthesize failed');
             throw error;
         }
     }
@@ -258,7 +262,6 @@ export class ChunkedStream extends tts.ChunkedStream {
  */
 export class Stream extends tts.SynthesizeStream {
     #tts: TTS;
-    #logger = log();
     label = 'custom.TTS.Stream';
 
     constructor(tts: TTS, connOptions?: APIConnectOptions) {
@@ -305,7 +308,7 @@ export class Stream extends tts.SynthesizeStream {
                 this.abortSignal,
             );
         } catch (error) {
-            this.#logger.child({ requestId, error }).error('custom TTS synthesize failed');
+            console.error('[tts.error]', { textLen: text.length, requestId, error }, 'custom TTS synthesize failed');
         }
     }
 }

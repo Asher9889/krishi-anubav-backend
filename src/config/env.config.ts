@@ -43,6 +43,11 @@ const envConfig:IEnvConfig = {
     // custom tts server
     ttsBaseUrl: process.env.TTS_BASE_URL!,
 
+    // custom ollama llm server
+    ollamaBaseUrl: process.env.OLLAMA_BASE_URL!,
+    ollamaApiKey: process.env.OLLAMA_API_KEY!,
+    ollamaModel: process.env.OLLAMA_MODEL!,
+
     // agri agent name
     agriAgentName: process.env.AGRI_AGENT_NAME!,
 }

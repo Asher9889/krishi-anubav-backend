@@ -10,7 +10,6 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "dev": "tsx watch --env-file=.env ./src/server.ts",
-
     "agent:dev": "npm run build && node --env-file=.env dist/modules/kisan-agent/agent.js dev",
     "agent:start": "npm run build && node --env-file=.env dist/modules/kisan-agent/agent.js start",
     "start": "node --env-file=.env dist/server.js",
@@ -30,7 +29,10 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1057.0",
     "@livekit/agents": "^1.9.0",
+    "@livekit/agents-plugin-livekit": "^1.9.0",
+    "@livekit/agents-plugin-openai": "^1.9.0",
     "@livekit/agents-plugin-silero": "^1.9.0",
+    "@livekit/noise-cancellation-node": "^0.2.2",
     "argon2": "^0.44.0",
     "axios": "^1.16.1",
     "bottleneck": "^2.19.5",
