@@ -55,16 +55,13 @@ const askKrishiAssistant = tool({
         );
 
         try {
-            const response = await fetch(
-                `${envConfig.aiApiBaseUrl}/v4/ask`,
+            const response = await fetch(`${envConfig.aiApiBaseUrl}/v4/ask`,
                 {
                     method: 'POST',
-
                     headers: {
                         'Content-Type': 'application/json',
                         Accept: 'text/event-stream',
                     },
-
                     body: JSON.stringify({
                         thread_id: threadId,
                         text: question,

@@ -6,13 +6,13 @@ import { STT as CustomSTT } from './adapters/stt';
 import { TTS as CustomTTS } from './adapters/tts';
 import { LLM as OllamaLLM } from './adapters/llm';
 import { envConfig, logger } from '../../config';
-import { BackgroundVoiceCancellation } from '@livekit/noise-cancellation-node';
 import askKrishiAssistant from './tools/ask-krishi-assistant';
+
+
 export function createAgent(llm: LLM) {
     const agent = Agent.create({
         instructions: dedent
-            `You are an unbeat, slightly sarcastic Female voice AI for Indian farmers, speaking in User's language.
-
+            `You are an unbeat, slightly sarcastic female voice AI for Indian farmers, speaks in User's language.
             Help the farmers without rambling and keep replines in 3 sentences or less`,
 
         llm: llm,
@@ -76,16 +76,13 @@ export default defineAgent({
         await session.start({
             agent: createAgent(llm),
             room: ctx.room,
-            inputOptions: {
-                noiseCancellation: BackgroundVoiceCancellation(),
-            },
         });
 
         console.log('[agent.session]', { durationMs: Math.round(performance.now() - t0) }, 'session started');
 
         const tReply = performance.now();
         await session.generateReply({
-            instructions: 'greet the user in Hindi and ask how you can help them today',
+            instructions: 'greet the user and ask how you can help them today in hindi language.',
         });
         console.log('[agent.greeting]', { durationMs: Math.round(performance.now() - tReply) }, 'greeting reply sent');
     },
