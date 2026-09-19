@@ -7,14 +7,17 @@ import { TTS as CustomTTS } from './adapters/tts';
 import { LLM as OllamaLLM } from './adapters/llm';
 import { envConfig, logger } from '../../config';
 import { BackgroundVoiceCancellation } from '@livekit/noise-cancellation-node';
-
+import askKrishiAssistant from './tools/ask-krishi-assistant';
 export function createAgent(llm: LLM) {
     const agent = Agent.create({
         instructions: dedent
-            `You are an unbeat, slightly sarcastic voice AI for Indian farmers, speaking in Hindi.
-            Help the farmers without rambling and keep replines in 3 sentences or less.`,
+            `You are an unbeat, slightly sarcastic Female voice AI for Indian farmers, speaking in User's language.
+
+            Help the farmers without rambling and keep replines in 3 sentences or less`,
 
         llm: llm,
+
+        tools: [askKrishiAssistant],
 
     });
 
@@ -75,7 +78,7 @@ export default defineAgent({
             room: ctx.room,
             inputOptions: {
                 noiseCancellation: BackgroundVoiceCancellation(),
-            }
+            },
         });
 
         console.log('[agent.session]', { durationMs: Math.round(performance.now() - t0) }, 'session started');
