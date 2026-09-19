@@ -10,7 +10,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "dev": "tsx watch --env-file=.env ./src/server.ts",
-    "lk": "lk agent dev --env-file=.env ./src/modules/kisan-agent/agent.ts --url=http://localhost:4500",
+
+    "agent:dev": "npm run build && node --env-file=.env dist/modules/kisan-agent/agent.js dev",
+    "agent:start": "npm run build && node --env-file=.env dist/modules/kisan-agent/agent.js start",
     "start": "node --env-file=.env dist/server.js",
     "seed:states": "tsx --env-file=.env src/seeders/scripts/seed-state.ts"
   },
